@@ -5,6 +5,7 @@ import passport from 'passport';
 // import users from './routes/api/users';
 // import messages from './routes/api/messages';
 // import channels from './routes/api/channels';
+import businesses from './routes/api/businesses';
 
 
 const app = express();
@@ -33,3 +34,4 @@ app.use(bodyParser.json());
 // app.use("/api/users", users);
 // app.use("/api/channels", channels);
 // app.use("/api/messages", messages);
+app.use("/api/businesses", businesses);
