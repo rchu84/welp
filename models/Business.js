@@ -24,7 +24,7 @@ const BusinessSchema = new Schema({
     type: Map,
     of: String
   },
-  categories: String,
+  categories: [String],
   hours: {
     type: Map,
     of: String

@@ -34,4 +34,4 @@ app.use(bodyParser.json());
 // app.use("/api/users", users);
 // app.use("/api/channels", channels);
 // app.use("/api/messages", messages);
-app.use("/api/businesses", businesses);
+app.use("/api/biz", businesses);
