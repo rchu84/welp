@@ -1,7 +1,8 @@
 import express from 'express';
 import Business from '../../models/Business';
 import Photo from '../../models/Photo';
-import Review from '../../models/Review'
+import Review from '../../models/Review';
+import User from '../../models/User';
 import mongoose from 'mongoose';
 
 const router = express.Router();
@@ -27,7 +28,7 @@ router.get("/categories", (req, res) => {
 router.get("/:id", (req, res) => {
   Promise.all([
     Photo.find({ business_id: req.params.id }),
-    Review.find({ business_id: req.params.id }).sort({date: -1}),
+    Review.find({ business_id: req.params.id }).sort({date: -1}).populate('user_id'),
     Business.findOne({ _id: req.params.id })
   ]).then(([photos, reviews, business]) => res.json(Object.assign(business, {photos}, {reviews})))
     .catch(err =>

@@ -29,6 +29,8 @@ import GridListTile from "@material-ui/core/GridListTile";
 import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
 import EmojiEmotionsIcon from "@material-ui/icons/EmojiEmotions";
 import MoodIcon from "@material-ui/icons/Mood";
+import StarsIcon from "@material-ui/icons/Stars";
+import PeopleIcon from "@material-ui/icons/People";
 
 import GoogleMapReact from 'google-map-react';
 
@@ -59,7 +61,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   locationRoot: {
-    flexGrow: 1
+    flexGrow: 1,
   },
 
   reviewRoot: {
@@ -76,6 +78,11 @@ const useStyles = makeStyles(theme => ({
   addressCard: {
     maxWidth: 315
   },
+
+  hoursTable:{
+    maxWidth: 250
+  },
+
   addressCardMedia: {
     height: 150
   },
@@ -87,6 +94,12 @@ const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(2),
     margin: "auto"
+  },
+  pos: {
+    marginBottom: 12
+  },
+  locationPos: {
+    marginBottom: 12
   }
 }));
 
@@ -165,11 +178,11 @@ export default function BizDetail(props) {
         ))}
       </Grid> */}
 
-      <Typography variant="h3" gutterBottom>
+      <Typography variant="h3" style={{ fontWeight: 700 }}>
         {props.biz.name}
       </Typography>
 
-      <Box mb={1} borderColor="transparent">
+      <Box borderColor="transparent">
         <div className={classes.ratingRoot}>
           <Rating
             name="read-only"
@@ -185,7 +198,7 @@ export default function BizDetail(props) {
         </div>
       </Box>
 
-      <Box mb={1} borderColor="transparent">
+      <Box borderColor="transparent">
         <div className={classes.ratingRoot}>
           <Typography variant="subtitle1" gutterBottom>
             {dollarSign(props.biz.attributes.RestaurantsPriceRange2)}
@@ -206,16 +219,21 @@ export default function BizDetail(props) {
         </div>
       </Box>
 
-      <Divider variant="middle" />
+      <Divider />
 
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h6" style={{ fontWeight: 700 }}>
         Location & Hours
       </Typography>
 
       <div className={classes.locationRoot}>
-        <Grid container spacing={2} justify="center">
+        <Grid
+          container
+          spacing={2}
+          justify="center"
+          className={classes.locationPos}
+        >
           <Grid item xs={6}>
-            <Card className={classes.addressCard}>
+            <Card className={classes.addressCard} variant="outlined">
               {/* <CardActionArea> */}
               <CardMedia
                 className={classes.addressCardMedia}
@@ -235,12 +253,16 @@ export default function BizDetail(props) {
           </Grid>
           <Grid item xs={6}>
             <TableContainer>
-              <Table size="small" aria-label="simple table">
+              <Table
+                size="small"
+                aria-label="simple table"
+                className={classes.hoursTable}
+              >
                 <TableBody>
                   {Object.keys(props.biz.hours).map(key => (
                     <TableRow key={key}>
                       <TableCell component="th" scope="row">
-                        <Box fontWeight="fontWeightBold">{key}</Box>
+                        <Box fontWeight="fontWeightBold">{key.slice(0, 3)}</Box>
                       </TableCell>
                       <TableCell align="right">
                         {props.biz.hours[key]
@@ -275,65 +297,88 @@ export default function BizDetail(props) {
         )}
       /> */}
 
-      <Divider variant="middle" />
+      <Divider />
+
+      <Typography variant="h6" style={{ fontWeight: 700 }}>
+        Reviews
+      </Typography>
 
       {props.biz.reviews.map(review => (
-        <Grid container justify="center" spacing={0} key={review._id}>
-          <Grid item xs={4}>
-            <Paper className={classes.paper} elevation={0}>
-              {review.user_id}
-            </Paper>
+        <div>
+          <Grid container justify="center" spacing={0} key={review._id}>
+            <Grid item xs={2}>
+              <Card elevation={0}>
+                <CardContent>
+                  <Box fontWeight="fontWeightBold">{review.user_id.name}</Box>
+                  <Typography variant="caption" className={classes.ratingRoot}>
+                    <StarsIcon style={{ fontSize: 16 }} />
+                    <Box ml={1}>{`${review.user_id.review_count}`} reviews</Box>
+                  </Typography>
+                  <Typography variant="caption" className={classes.ratingRoot}>
+                    <PeopleIcon style={{ fontSize: 16 }} />
+                    <Box ml={1}>
+                      {`${review.user_id.friends.split(", ").length}`} friends
+                    </Box>
+                  </Typography>
+                </CardContent>
+              </Card>
+              {/* <Paper className={classes.paper} elevation={0}>
+              
+            </Paper> */}
+            </Grid>
+
+            <Grid item xs={10}>
+              <Card elevation={0}>
+                <CardContent>
+                  <div className={classes.reviewRoot}>
+                    <Rating
+                      name="read-only"
+                      value={review.stars}
+                      precision={0.5}
+                      readOnly
+                    />
+                    {/* <Typography variant="caption"> */}
+                    <Box ml={2}>
+                      <Typography variant="body2">
+                        {new Date(review.date).toLocaleDateString()}
+                      </Typography>
+                    </Box>
+                    {/* </Typography> */}
+                  </div>
+
+                  <Typography variant="body2" component="p">
+                    {review.text}
+                  </Typography>
+                </CardContent>
+                <CardActions className={classes.pos}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<EmojiObjectsIcon />}
+                  >
+                    Useful{review.useful > 0 ? ` ${review.useful}` : ""}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<EmojiEmotionsIcon />}
+                  >
+                    Funny{review.funny > 0 ? ` ${review.funny}` : ""}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<MoodIcon />}
+                  >
+                    Cool{review.cool > 0 ? ` ${review.cool}` : ""}
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
           </Grid>
 
-          <Grid item xs={8}>
-            <Card elevation={0}>
-              <CardContent>
-                <div className={classes.reviewRoot}>
-                  <Rating
-                    name="read-only"
-                    value={review.stars}
-                    precision={0.5}
-                    readOnly
-                  />
-                  {/* <Typography variant="caption"> */}
-                  <Box ml={2}>
-                    <Typography variant="body2">
-                      {new Date(review.date).toLocaleDateString()}
-                    </Typography>
-                  </Box>
-                  {/* </Typography> */}
-                </div>
-
-                <Typography variant="body2" component="p">
-                  {review.text}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  startIcon={<EmojiObjectsIcon />}
-                >
-                  Useful{review.useful > 0 ? ` ${review.useful}` : ""}
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  startIcon={<EmojiEmotionsIcon />}
-                >
-                  Funny{review.funny > 0 ? ` ${review.funny}` : ""}
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  startIcon={<MoodIcon />}
-                >
-                  Cool{review.cool > 0 ? ` ${review.cool}` : ""}
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        </Grid>
+          <Divider />
+        </div>
       ))}
 
       {/* <div style={{ height: "315px", width: "315px" }}>
