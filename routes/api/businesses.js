@@ -1,5 +1,7 @@
 import express from 'express';
 import Business from '../../models/Business';
+import Photo from '../../models/Photo';
+import Review from '../../models/Review'
 import mongoose from 'mongoose';
 
 const router = express.Router();
@@ -23,8 +25,11 @@ router.get("/categories", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
-  Business.findOne({ _id: req.params.id })
-    .then(business => res.json(business))
+  Promise.all([
+    Photo.find({ business_id: req.params.id }),
+    Review.find({ business_id: req.params.id }).sort({date: -1}),
+    Business.findOne({ _id: req.params.id })
+  ]).then(([photos, reviews, business]) => res.json(Object.assign(business, {photos}, {reviews})))
     .catch(err =>
       res.status(404).json({ nobusinessfound: "No business found with that ID"})
     );

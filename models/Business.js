@@ -28,7 +28,13 @@ const BusinessSchema = new Schema({
   hours: {
     type: Map,
     of: String
-  }
+  },
+  photos: [
+    {type: String, ref: 'Photo'}
+  ],
+  reviews: [
+    {type: String, ref: 'Review'}
+  ]
 });
 
 const Business = mongoose.model('Business', BusinessSchema, "business");
