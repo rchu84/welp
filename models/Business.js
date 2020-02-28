@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongoosePaginate from "mongoose-paginate-v2";
 
 const Schema = mongoose.Schema;
 
@@ -53,6 +54,8 @@ BusinessSchema.virtual('reviews', {
 
 BusinessSchema.set('toObject', { virtuals: true });
 BusinessSchema.set('toJSON', { virtuals: true });
+
+BusinessSchema.plugin(mongoosePaginate);
 
 const Business = mongoose.model('Business', BusinessSchema, "business");
 module.exports = Business;
