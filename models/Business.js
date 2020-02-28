@@ -29,13 +29,30 @@ const BusinessSchema = new Schema({
     type: Map,
     of: String
   },
-  photos: [
-    {type: String, ref: 'Photo'}
-  ],
-  reviews: [
-    {type: String, ref: 'Review'}
-  ]
+  // photos: [
+  //   {type: String, ref: 'Photo'}
+  // ],
+  // reviews: [
+  //   {type: String, ref: 'Review'}
+  // ]
+}, {
+  versionKey: false
 });
+
+BusinessSchema.virtual('photos', {
+  ref: 'Photo',
+  localField: '_id',
+  foreignField: 'business_id'
+});
+
+BusinessSchema.virtual('reviews', {
+  ref: 'Review',
+  localField: '_id',
+  foreignField: 'business_id'
+});
+
+BusinessSchema.set('toObject', { virtuals: true });
+BusinessSchema.set('toJSON', { virtuals: true });
 
 const Business = mongoose.model('Business', BusinessSchema, "business");
 module.exports = Business;

@@ -304,8 +304,8 @@ export default function BizDetail(props) {
       </Typography>
 
       {props.biz.reviews.map(review => (
-        <div>
-          <Grid container justify="center" spacing={0} key={review._id}>
+        <div key={review._id}>
+          <Grid container justify="center" spacing={0}>
             <Grid item xs={2}>
               <Card elevation={0}>
                 <CardContent>
