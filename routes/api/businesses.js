@@ -28,7 +28,7 @@ router.get("/categories", (req, res) => {
     );
 });
 
-router.get("/city/:city/:state", (req, res) => {
+router.get("/city", (req, res) => {
     // .populate("photos")
     // .populate({
     //   path: "reviews",
@@ -39,13 +39,20 @@ router.get("/city/:city/:state", (req, res) => {
     //     sort: { date: -1 }
     //   }
     // })
-  let query = { city: req.params.city, state: req.params.state };
+  let query = { 
+    city: req.query.city, 
+    state: req.query.state, 
+    categories: req.query.category
+  };
   let options = {
-    populate: ['photos', { 
-      path: "reviews", 
-      populate: { path: "user_id" },
-      options: { sort: { date: -1 }}
-    }],
+    // populate: ['photos', { 
+    //   path: "reviews", 
+    //   populate: { path: "user_id" },
+    //   options: { sort: { date: -1 }}
+    // }],
+    limit: 20,
+    page: req.query.page || 1,
+    populate: 'photos',
     lean: true
   };
 

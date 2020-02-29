@@ -32,9 +32,6 @@ import MoodIcon from "@material-ui/icons/Mood";
 import StarsIcon from "@material-ui/icons/Stars";
 import PeopleIcon from "@material-ui/icons/People";
 
-import GoogleMapReact from 'google-map-react';
-
-const googleMapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 // https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png
 
 // https://s3-media0.fl.yelpcdn.com/assets/public/stars.yelp_design_web.yji-9bec2045845c24d3bff3ddb582884eda.png
@@ -44,7 +41,7 @@ const googleMapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
-    maxWidth: 800,
+    maxWidth: 960,
     margin: "auto"
   },
 
@@ -61,7 +58,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   locationRoot: {
-    flexGrow: 1,
+    flexGrow: 1
   },
 
   reviewRoot: {
@@ -75,11 +72,17 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center"
   },
 
+  categoriesRoot: {
+    display: "flex",
+    alignItems: "center",
+    margin: "0 4px"
+  },
+
   addressCard: {
     maxWidth: 315
   },
 
-  hoursTable:{
+  hoursTable: {
     maxWidth: 250
   },
 
@@ -151,7 +154,7 @@ export default function BizDetail(props) {
   });
 
   useEffect(() => {
-    props.fetchBizById(props.match.params.bizId);
+    props.fetchBizById(props.match.params.bizId)
   }, []);
 
   if (!props.biz) return null;
@@ -199,11 +202,17 @@ export default function BizDetail(props) {
       </Box>
 
       <Box borderColor="transparent">
-        <div className={classes.ratingRoot}>
-          <Typography variant="subtitle1" gutterBottom>
-            {dollarSign(props.biz.attributes.RestaurantsPriceRange2)}
-            {bull}
-          </Typography>
+        <div className={classes.categoriesRoot}>
+          {props.biz.attributes &&
+          props.biz.attributes.RestaurantsPriceRange2 ? (
+            <Typography variant="subtitle1" gutterBottom>
+              {dollarSign(props.biz.attributes.RestaurantsPriceRange2)}
+              {bull}
+            </Typography>
+          ) : (
+            ""
+          )}
+
           <Typography variant="subtitle2" gutterBottom>
             {props.biz.categories
               .map(category => (
