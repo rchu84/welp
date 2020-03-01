@@ -119,7 +119,7 @@ export default function Main() {
               <Link
                 underline="none"
                 component={RouterLink}
-                to={`/search?c=${encodeURIComponent(category)}&loc=${encodeURIComponent(`${city},${state}`)}`}
+                to={"/search?c=" + encodeURIComponent(category) + "&loc=" + encodeURIComponent(`${city},${state}`)}
               >
                 <Paper className={classes.paper}>
                   {categories[category]}

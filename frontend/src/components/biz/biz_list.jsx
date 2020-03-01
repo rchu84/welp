@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { Link as RouterLink } from "react-router-dom";
 
 import queryString from "query-string";
 import {
@@ -79,6 +80,7 @@ const AnyReactComponent = ({ text }: any) => <img src={text} />;
 export default function BizList(props) {
   const classes = useStyles();
   const values = queryString.parse(props.location.search);
+  const [city, state] = values.loc.split(",");
   const bull = <span className={classes.bullet}>•</span>;
 
 
@@ -90,7 +92,7 @@ export default function BizList(props) {
 
   const fetchNewList = page => {
     let category = values.c;
-    let [city, state] = values.loc.split(",");
+    // let [city, state] = values.loc.split(",");
     props
       .fetchBizByCityState(category, city, state, page)
       .then(results => {
@@ -99,6 +101,11 @@ export default function BizList(props) {
         setTotalPages(results.results.data.totalPages);
         setBizList(results.results.data.docs);
       });
+  };
+
+  const handleCategoryClick = url => e => {
+    e.stopPropagation();
+    props.history.push(url);
   };
 
   const handlePageChange = (event, value) => {
@@ -113,7 +120,7 @@ export default function BizList(props) {
 
   useEffect(() => {
     fetchNewList(1);
-  }, []);
+  }, [props.location.search]);
 
   if (bizList.length === 0) return null;
 
@@ -127,7 +134,11 @@ export default function BizList(props) {
         {bizList.map((biz, idx) => (
           <div key={biz._id}>
             {/* {console.log(props.bizList[bizId])} */}
-            <Grid container spacing={4} onClick={() => props.history.push(`/biz/${biz._id}`)}>
+            <Grid
+              container
+              spacing={4}
+              onClick={() => props.history.push(`/biz/${biz._id}`)}
+            >
               <Grid item xs={12}>
                 <Card variant="outlined" style={{ background: "#f5f5f5" }}>
                   <CardActionArea>
@@ -178,9 +189,26 @@ export default function BizList(props) {
                             {biz.categories
                               .slice(0, 2)
                               .map(category => (
+                                // <Link
+                                //   key={category}
+                                //   href={`/#/c/${biz.city.toLowerCase()}/${category.toLowerCase()}`}
+                                // >
                                 <Link
                                   key={category}
-                                  href={`/#/c/${biz.city.toLowerCase()}/${category.toLowerCase()}`}
+                                  underline="none"
+                                  component={RouterLink}
+                                  to={
+                                    "/search?c=" +
+                                    encodeURIComponent(category) +
+                                    "&loc=" +
+                                    encodeURIComponent(`${city},${state}`)
+                                  }
+                                  onClick={handleCategoryClick(
+                                    "/search?c=" +
+                                      encodeURIComponent(category) +
+                                      "&loc=" +
+                                      encodeURIComponent(`${city},${state}`)
+                                  )}
                                 >
                                   {category}
                                 </Link>

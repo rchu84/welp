@@ -6,6 +6,7 @@ import { Rating, Pagination } from '@material-ui/lab';
 import Box from '@material-ui/core/Box';
 import Divider from "@material-ui/core/Divider";
 
+import { Link as RouterLink } from "react-router-dom";
 
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
@@ -34,6 +35,8 @@ import PeopleIcon from "@material-ui/icons/People";
 
 import { getReviewsByBizId } from '../../util/biz_api_util';
 
+import Carousel from 'react-material-ui-carousel';
+
 // https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png
 
 // https://s3-media0.fl.yelpcdn.com/assets/public/stars.yelp_design_web.yji-9bec2045845c24d3bff3ddb582884eda.png
@@ -53,6 +56,10 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "space-around",
     overflow: "hidden",
     backgroundColor: theme.palette.background.paper
+  },
+
+  carouselRoot: {
+    height: 212
   },
 
   gridList: {
@@ -111,6 +118,30 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(2)
     },
     marginBottom: "20px"
+  },
+  photosRoot: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
+    overflow: "hidden",
+    backgroundColor: "#f5f5f5",
+    marginTop: 10,
+    marginBottom: 10,
+    width: "100vw",
+    marginLeft: "calc(-50vw + 49%)",
+    marginRight: "calc(-50vw + 49%)",
+  },
+  photosGridList: {
+    flexWrap: "nowrap",
+    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+    transform: "translateZ(0)"
+  },
+  photosTitle: {
+    color: theme.palette.primary.light
+  },
+  photosTitleBar: {
+    background:
+      "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
   }
 }));
 
@@ -195,11 +226,33 @@ export default function BizDetail(props) {
 
   return (
     <div className={classes.root}>
-      <div className={classes.galleryRoot}>
+      {/* <div className={classes.galleryRoot}>
         <GridList cellHeight="auto" cols={4} className={classes.gridList}>
           {props.biz.photos.map(photo => (
             <GridListTile cols={4} key={photo._id}>
               <img src={process.env.PUBLIC_URL + `/photos/${photo._id}.jpg`} />
+            </GridListTile>
+          ))}
+        </GridList>
+      </div> */}
+
+      <div className={classes.photosRoot}>
+        <GridList className={classes.photosGridList} cols={4.5}>
+          {props.biz.photos.map(photo => (
+            <GridListTile key={photo._id}>
+              <img src={process.env.PUBLIC_URL + `/photos/${photo._id}.jpg`} />
+              {/* <GridListTileBar
+                title={tile.title}
+                classes={{
+                  root: classes.photosTitleBar,
+                  title: classes.photosTitle
+                }}
+                actionIcon={
+                  <IconButton aria-label={`star ${tile.title}`}>
+                    <StarBorderIcon className={classes.photosTitle} />
+                  </IconButton>
+                }
+              /> */}
             </GridListTile>
           ))}
         </GridList>
@@ -250,7 +303,14 @@ export default function BizDetail(props) {
               .map(category => (
                 <Link
                   key={category}
-                  href={`/#/c/${props.biz.city.toLowerCase()}/${category.toLowerCase()}`}
+                  underline="none"
+                  component={RouterLink}
+                  to={
+                    "/search?c=" +
+                    encodeURIComponent(category) +
+                    "&loc=" +
+                    encodeURIComponent(`${props.biz.city},${props.biz.state}`)
+                  }
                 >
                   {category}
                 </Link>
@@ -349,8 +409,13 @@ export default function BizDetail(props) {
           <Grid container justify="center" spacing={0}>
             <Grid item xs={2}>
               <Card elevation={0}>
-                <CardContent>
-                  <Box fontWeight="fontWeightBold">{review.user_id.name}</Box>
+                <CardContent style={{ background: "#f5f5f5" }}>
+                  <Box
+                    fontWeight="fontWeightBold"
+                    style={{ marginTop: 5, marginBottom: 5 }}
+                  >
+                    {review.user_id.name}
+                  </Box>
                   <Typography variant="caption" className={classes.ratingRoot}>
                     <StarsIcon style={{ fontSize: 16 }} />
                     <Box ml={1}>{`${review.user_id.review_count}`} reviews</Box>
@@ -369,7 +434,7 @@ export default function BizDetail(props) {
             </Grid>
 
             <Grid item xs={10}>
-              <Card elevation={0}>
+              <Card elevation={0} style={{ background: "#f5f5f5" }}>
                 <CardContent>
                   <div className={classes.reviewRoot}>
                     <Rating
@@ -377,6 +442,7 @@ export default function BizDetail(props) {
                       value={review.stars}
                       precision={0.5}
                       readOnly
+                      style={{ marginBottom: 3 }}
                     />
                     {/* <Typography variant="caption"> */}
                     <Box ml={2}>
