@@ -352,41 +352,52 @@ export default function BizDetail(props) {
               {/* </CardActionArea> */}
             </Card>
           </Grid>
-          <Grid item xs={6}>
-            <TableContainer>
-              <Table
-                size="small"
-                aria-label="simple table"
-                className={classes.hoursTable}
-              >
-                <TableBody>
-                  {Object.keys(props.biz.hours).map(key => (
-                    <TableRow key={key}>
-                      <TableCell component="th" scope="row">
-                        <Box fontWeight="fontWeightBold">{key.slice(0, 3)}</Box>
-                      </TableCell>
-                      <TableCell align="right">
-                        {props.biz.hours[key]
-                          .split("-")
-                          .map(time =>
-                            new Date(
-                              null,
-                              null,
-                              null,
-                              ...time.split(":")
-                            ).toLocaleTimeString(navigator.language, {
-                              hour: "2-digit",
-                              minute: "2-digit"
-                            })
-                          )
-                          .reduce((prev, curr) => [prev, " - ", curr])}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid>
+
+          {props.biz.hours ? (
+            <Grid item xs={6}>
+              <TableContainer>
+                <Table
+                  size="small"
+                  aria-label="simple table"
+                  className={classes.hoursTable}
+                >
+                  <TableBody>
+                    {Object.keys(props.biz.hours).map(key => (
+                      <TableRow key={key}>
+                        <TableCell component="th" scope="row">
+                          <Box fontWeight="fontWeightBold">
+                            {key.slice(0, 3)}
+                          </Box>
+                        </TableCell>
+                        <TableCell align="right">
+                          {props.biz.hours[key]
+                            .split("-")
+                            .every((val, i, arr) => val === arr[0])
+                            ? "24 hours"
+                            : props.biz.hours[key]
+                                .split("-")
+                                .map(time =>
+                                  new Date(
+                                    null,
+                                    null,
+                                    null,
+                                    ...time.split(":")
+                                  ).toLocaleTimeString(navigator.language, {
+                                    hour: "2-digit",
+                                    minute: "2-digit"
+                                  })
+                                )
+                                .reduce((prev, curr) => [prev, " - ", curr])}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+          ) : (
+            ""
+          )}
         </Grid>
       </div>
 
