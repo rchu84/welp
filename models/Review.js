@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 const Schema = mongoose.Schema;
 
@@ -29,6 +30,8 @@ const ReviewSchema = new Schema({
     default: Date.now
   }
 });
+
+ReviewSchema.plugin(mongoosePaginate);
 
 const Review = mongoose.model("Review", ReviewSchema, "review");
 module.exports = Review;

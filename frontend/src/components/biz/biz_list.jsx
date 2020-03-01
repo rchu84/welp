@@ -127,7 +127,7 @@ export default function BizList(props) {
         {bizList.map((biz, idx) => (
           <div key={biz._id}>
             {/* {console.log(props.bizList[bizId])} */}
-            <Grid container spacing={4}>
+            <Grid container spacing={4} onClick={() => props.history.push(`/biz/${biz._id}`)}>
               <Grid item xs={12}>
                 <Card variant="outlined" style={{ background: "#f5f5f5" }}>
                   <CardActionArea>
@@ -223,6 +223,7 @@ export default function BizList(props) {
         >
           {bizList.map(biz => (
             <AnyReactComponent
+              key={biz._id}
               lat={biz.latitude}
               lng={biz.longitude}
               text="https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png"

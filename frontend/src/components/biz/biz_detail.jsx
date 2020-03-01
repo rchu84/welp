@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 
-import Rating from '@material-ui/lab/Rating';
+import { Rating, Pagination } from '@material-ui/lab';
 import Box from '@material-ui/core/Box';
 import Divider from "@material-ui/core/Divider";
 
@@ -31,6 +31,8 @@ import EmojiEmotionsIcon from "@material-ui/icons/EmojiEmotions";
 import MoodIcon from "@material-ui/icons/Mood";
 import StarsIcon from "@material-ui/icons/Stars";
 import PeopleIcon from "@material-ui/icons/People";
+
+import { getReviewsByBizId } from '../../util/biz_api_util';
 
 // https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png
 
@@ -103,6 +105,12 @@ const useStyles = makeStyles(theme => ({
   },
   locationPos: {
     marginBottom: 12
+  },
+  paginationRoot: {
+    "& > *": {
+      marginTop: theme.spacing(2)
+    },
+    marginBottom: "20px"
   }
 }));
 
@@ -148,13 +156,37 @@ export default function BizDetail(props) {
   const [zoom, setZoom] = useState(15);
   const bull = <span className={classes.bullet}>•</span>;
 
+  const [page, setPage] = useState(1);
+  const [pagingCounter, setPagingCounter] = useState(1);
+  // const [map, setMap] = useState(null);
+  const [totalPages, setTotalPages] = useState(1);
+  const [reviews, setReviews] = useState([]);
+
+
   const createMapOptions = maps => ({
     disableDefaultUI: true,
     draggable: false
   });
 
+  const fetchReviews = page => {
+    getReviewsByBizId(props.match.params.bizId, page).then(results => {
+      setPagingCounter(results.data.pagingCounter);
+      setTotalPages(results.data.totalPages);
+      setReviews(results.data.docs);
+    });
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+    fetchReviews(value);
+  };
+
   useEffect(() => {
     props.fetchBizById(props.match.params.bizId)
+  }, []);
+
+  useEffect(() => {
+    fetchReviews(1);
   }, []);
 
   if (!props.biz) return null;
@@ -312,7 +344,7 @@ export default function BizDetail(props) {
         Reviews
       </Typography>
 
-      {props.biz.reviews.map(review => (
+      {reviews.map(review => (
         <div key={review._id}>
           <Grid container justify="center" spacing={0}>
             <Grid item xs={2}>
@@ -389,6 +421,14 @@ export default function BizDetail(props) {
           <Divider />
         </div>
       ))}
+
+      <div className={classes.paginationRoot}>
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={handlePageChange}
+        />
+      </div>
 
       {/* <div style={{ height: "315px", width: "315px" }}>
         <GoogleMapReact

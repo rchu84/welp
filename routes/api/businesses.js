@@ -81,21 +81,46 @@ router.get("/:id", (req, res) => {
   
   Business.findOne({ _id: req.params.id })
     .populate('photos')
-    .populate({
-      path: 'reviews',
-      populate: {
-        path: 'user_id'
-      },
-      options: {
-        sort: { date: -1 }
-      }
-    })
+    // .populate({
+    //   path: 'reviews',
+    //   populate: {
+    //     path: 'user_id'
+    //   },
+    //   options: {
+    //     sort: { date: -1 }
+    //   }
+    // })
     .then(biz => res.json(biz))
     .catch(err =>
       res.status(404).json({ nobusinessfound: "No business found with that ID" })
     );
 });
 
+router.get("/:id/reviews", (req, res) => {
+  let query = {
+    business_id: req.params.id
+  };
+  let options = {
+    // populate: ['photos', {
+    //   path: "reviews",
+    //   populate: { path: "user_id" },
+    //   options: { sort: { date: -1 }}
+    // }],
+    sort: { date: -1 },
+    populate: 'user_id',
+    limit: 20,
+    page: req.query.page || 1,
+    lean: true
+  };
+
+  Review.paginate(query, options)
+    .then(reviews => res.json(reviews))
+    .catch(err =>
+      res
+        .status(404)
+        .json({ nobusinessfound: "No reviews found with that ID" })
+    );
+});
 
 
 module.exports = router;

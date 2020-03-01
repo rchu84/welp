@@ -13,4 +13,12 @@ export const getBizByCityState = (category, city, state, page) => (
       page
     }
   })
-)
+);
+
+export const getReviewsByBizId = (bizId, page) => (
+  axios.get(`api/biz/${bizId}/reviews`, {
+    params: {
+      page
+    }
+  })
+);
