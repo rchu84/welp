@@ -171,43 +171,43 @@ export default function BizList(props) {
 
               <Grid item xs={12}>
                 <Card variant="outlined" style={{ background: "#f5f5f5" }}>
-                  <CardActionArea>
-                    <CardContent>
-                      <Box display="flex" flexDirection="row">
-                        <Box>
-                          {biz.photos.length > 0 ? (
-                            <Carousel
-                              autoPlay={false}
-                              indicators={false}
-                              // animation="slide"
-                            >
-                              {biz.photos.map(photo => (
-                                <CardMedia
-                                  style={{
-                                    width: 150,
-                                    height: 150,
-                                    borderRadius: 5,
-                                    marginRight: 16
-                                  }}
-                                  image={
-                                    process.env.PUBLIC_URL +
-                                    `/photos/${photo._id}.jpg`
-                                  }
-                                />
-                              ))}
-                            </Carousel>
-                          ) : (
-                            <BusinessOutlinedIcon
-                              style={{
-                                width: 150,
-                                height: 150,
-                                borderRadius: 5,
-                                marginRight: 16
-                              }}
-                            />
-                          )}
-                        </Box>
-
+                  <CardContent>
+                    <Box display="flex" flexDirection="row">
+                      <Box>
+                        {biz.photos.length > 0 ? (
+                          <Carousel
+                            autoPlay={false}
+                            indicators={false}
+                            // animation="slide"
+                          >
+                            {biz.photos.map(photo => (
+                              <CardMedia
+                                key={photo._id}
+                                style={{
+                                  width: 150,
+                                  height: 150,
+                                  borderRadius: 5,
+                                  marginRight: 16
+                                }}
+                                image={
+                                  process.env.PUBLIC_URL +
+                                  `/photos/${photo._id}.jpg`
+                                }
+                              />
+                            ))}
+                          </Carousel>
+                        ) : (
+                          <BusinessOutlinedIcon
+                            style={{
+                              width: 150,
+                              height: 150,
+                              borderRadius: 5,
+                              marginRight: 16
+                            }}
+                          />
+                        )}
+                      </Box>
+                      <CardActionArea>
                         <Box flexGrow={1}>
                           <Box display="flex">
                             <Box flexGrow={1}>
@@ -287,9 +287,9 @@ export default function BizList(props) {
                             </div>
                           </Box>
                         </Box>
-                      </Box>
-                    </CardContent>
-                  </CardActionArea>
+                      </CardActionArea>
+                    </Box>
+                  </CardContent>
                 </Card>
               </Grid>
             </Grid>

@@ -237,7 +237,7 @@ export default function BizDetail(props) {
       </div> */}
 
       <div className={classes.photosRoot}>
-        <GridList className={classes.photosGridList} cols={4.5}>
+        <GridList className={classes.photosGridList} cols={props.biz.photos.length < 4 ? props.biz.photos.length : 4.5}>
           {props.biz.photos.map(photo => (
             <GridListTile key={photo._id}>
               <img src={process.env.PUBLIC_URL + `/photos/${photo._id}.jpg`} />
