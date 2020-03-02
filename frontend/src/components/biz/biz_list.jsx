@@ -5,7 +5,8 @@ import { Link as RouterLink } from "react-router-dom";
 
 import queryString from "query-string";
 import {
-  Grid, Card, CardContent, Box, Link, CardActionArea, CardMedia
+  Grid, Card, CardContent, Box, Link, CardActionArea, CardMedia,
+  List, ListItem, ListItemText, Menu, MenuItem, Button
 } from '@material-ui/core';
 import {
   Rating, Pagination
@@ -16,6 +17,10 @@ import Carousel from "react-material-ui-carousel";
 import RoomOutlinedIcon from "@material-ui/icons/RoomOutlined";
 import RoomRoundedIcon from "@material-ui/icons/RoomRounded";
 import BusinessOutlinedIcon from "@material-ui/icons/BusinessOutlined";
+import CheckBoxOutlineBlankOutlinedIcon from "@material-ui/icons/CheckBoxOutlineBlankOutlined";
+import CheckBoxOutlinedIcon from "@material-ui/icons/CheckBoxOutlined";
+import RadioButtonCheckedOutlinedIcon from "@material-ui/icons/RadioButtonCheckedOutlined";
+import RadioButtonUncheckedOutlinedIcon from "@material-ui/icons/RadioButtonUncheckedOutlined";
 
 import GoogleMapReact from "google-map-react";
 
@@ -63,6 +68,18 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(2)
     },
     marginBottom: "20px"
+  },
+
+  priceRangeMenuRoot: {
+    width: "100%",
+    maxWidth: 150,
+    // backgroundColor: theme.palette.background.paper
+  },
+
+  sortMenuRoot: {
+    width: "100%",
+    maxWidth: 200,
+    // backgroundColor: theme.palette.background.paper
   }
 }));
 
@@ -81,6 +98,14 @@ const dollarSign = range => {
   }
 };
 
+const priceRanges = [
+  '$', '$$', '$$$', '$$$$'
+];
+
+const sortBy = [
+  'Default', 'Rating', 'Most Reviewed'
+];
+
 const AnyReactComponent = ({ text }: any) => <img src={text} />;
 
 export default function BizList(props) {
@@ -89,6 +114,42 @@ export default function BizList(props) {
   const [city, state] = values.loc.split(",");
   const bull = <span className={classes.bullet}>•</span>;
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedIndices, setSelectedIndices] = useState([false, false, false, false]);
+
+  const [anchorElSort, setAnchorElSort] = useState(null);
+  const [selectedIndexSort, setSelectedIndexSort] = useState(0);
+
+  const handleClickListItem = event => {
+    if (!anchorEl) setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuItemClick = (event, index) => {
+    let newArr = selectedIndices.slice();
+    newArr[index] = !newArr[index];
+    setSelectedIndices(newArr);
+    // setAnchorEl(null);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    fetchNewList(1);
+  };
+
+  const handleClickListItemSort = event => {
+    setAnchorElSort(event.currentTarget);
+  };
+
+  const handleMenuItemClickSort = (event, index) => {
+    setSelectedIndexSort(index);
+    setAnchorElSort(null);
+    // fetchNewList(1);
+  };
+
+  const handleCloseSort = () => {
+    setAnchorElSort(null);
+    // fetchNewList(1);
+  };
 
   const [page, setPage] = useState(1);
   const [pagingCounter, setPagingCounter] = useState(1);
@@ -100,8 +161,14 @@ export default function BizList(props) {
   const fetchNewList = page => {
     let category = values.c;
     // let [city, state] = values.loc.split(",");
+    let prices = [];
+
+    if (selectedIndices.some(el => el)) selectedIndices.forEach((el, i) => {
+      if (el) prices.push(i + 1);
+    });
+
     props
-      .fetchBizByCityState(category, city, state, page)
+      .fetchBizByCityState(category, city, state, page, prices.join(","), selectedIndexSort)
       .then(results => {
         // console.log(results);
         setPagingCounter(results.results.data.pagingCounter);
@@ -127,7 +194,7 @@ export default function BizList(props) {
 
   useEffect(() => {
     fetchNewList(1);
-  }, [props.location.search]);
+  }, [props.location.search, selectedIndexSort]);
 
   const handleMouseEnter = idx => e => {
     setHover(idx);
@@ -142,9 +209,118 @@ export default function BizList(props) {
   return (
     <div className={classes.root}>
       <div className={classes.bizListRoot}>
-        <Typography variant="h6" gutterBottom>
-          All Results
+        <Typography
+          variant="h4"
+          style={{ marginTop: 20, fontWeight: 700 }}
+          gutterBottom
+        >
+          {/* All Results */}
+          {`${values.c} in ${city}, ${state}`}
         </Typography>
+
+        <Box display="flex" flexDirection="row" alignItems="center">
+          <div>
+            <Typography
+              variant="h6"
+              style={{ fontWeight: 700, marginRight: 10 }}
+            >
+              Filters:
+            </Typography>
+          </div>
+
+          <div className={classes.sortMenuRoot}>
+            <List component="nav" aria-label="sort">
+              <ListItem
+                button
+                aria-haspopup="true"
+                aria-controls="lock-menu"
+                aria-label="sort"
+                onClick={handleClickListItemSort}
+              >
+                <ListItemText
+                  primary={`Sort: ${sortBy[selectedIndexSort]}`}
+                  // secondary={options[selectedIndex]}
+                />
+              </ListItem>
+            </List>
+            <Menu
+              id="lock-menu"
+              anchorEl={anchorElSort}
+              keepMounted
+              open={Boolean(anchorElSort)}
+              onClose={handleCloseSort}
+              variant="menu"
+            >
+              {sortBy.map((option, index) => (
+                <MenuItem
+                  style={{ width: 200 }}
+                  key={option}
+                  // disabled={index === 0}
+                  selected={index === selectedIndexSort}
+                  onClick={event => handleMenuItemClickSort(event, index)}
+                >
+                  {index === selectedIndexSort ? (
+                    <RadioButtonCheckedOutlinedIcon />
+                  ) : (
+                    <RadioButtonUncheckedOutlinedIcon />
+                  )}
+                  {option}
+                </MenuItem>
+              ))}
+            </Menu>
+          </div>
+
+          <div className={classes.priceRangeMenuRoot}>
+            <List component="nav" aria-label="Price">
+              <ListItem
+                button
+                aria-haspopup="true"
+                aria-controls="lock-menu"
+                aria-label="price range"
+                onClick={handleClickListItem}
+              >
+                <ListItemText
+                  primary={
+                    selectedIndices.some(index => index)
+                      ? selectedIndices
+                          .map((el, i) =>
+                            el ? dollarSign((i + 1).toString()) : el
+                          )
+                          .filter(el => el)
+                          .reduce((prev, curr) => [prev, ", ", curr])
+                      : "Price"
+                  }
+                  // secondary={options[selectedIndex]}
+                />
+              </ListItem>
+            </List>
+            <Menu
+              id="lock-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              variant="menu"
+            >
+              {priceRanges.map((priceRange, index) => (
+                <MenuItem
+                  style={{ width: 150 }}
+                  key={priceRange}
+                  // disabled={index === 0}
+                  selected={selectedIndices[index]}
+                  onClick={event => handleMenuItemClick(event, index)}
+                >
+                  {selectedIndices[index] ? (
+                    <CheckBoxOutlinedIcon />
+                  ) : (
+                    <CheckBoxOutlineBlankOutlinedIcon />
+                  )}{" "}
+                  {priceRange}
+                </MenuItem>
+              ))}
+            </Menu>
+          </div>
+        </Box>
 
         {bizList.map((biz, idx) => (
           <div key={biz._id}>

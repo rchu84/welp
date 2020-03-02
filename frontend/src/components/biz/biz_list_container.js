@@ -8,8 +8,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  fetchBizByCityState: (category, city, state, page) =>
-    dispatch(fetchBizByCityState(category, city, state, page))
+  fetchBizByCityState: (category, city, state, page, prices, sort) =>
+    dispatch(fetchBizByCityState(category, city, state, page, prices, sort))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(BizList);

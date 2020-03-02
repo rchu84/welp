@@ -39,11 +39,16 @@ router.get("/city", (req, res) => {
     //     sort: { date: -1 }
     //   }
     // })
-  let query = { 
-    city: req.query.city, 
-    state: req.query.state, 
-    categories: req.query.category
+  let query = {
+    city: req.query.city,
+    state: req.query.state,
+    categories: req.query.category,
+    // "attributes.RestaurantsPriceRange2": { $in: req.query.priceRange.split(",") }
   };
+  if (req.query.prices) query["attributes.RestaurantsPriceRange2"] = {
+                              $in: req.query.prices.split(",")
+                            };
+
   let options = {
     // populate: ['photos', { 
     //   path: "reviews", 
@@ -55,6 +60,22 @@ router.get("/city", (req, res) => {
     populate: 'photos',
     lean: true
   };
+
+  console.log(req.query);
+  if (req.query.sort) {
+    if (req.query.sort === "1") {
+      options["sort"] = {
+        stars: -1,
+        review_count: -1
+      };
+    } else if (req.query.sort === "2") {
+      options["sort"] = {
+        review_count: -1
+      };
+    }
+  };
+
+  console.log(options);
 
   Business.paginate(query, options)
     .then(biz => res.json(biz))

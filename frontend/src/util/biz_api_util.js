@@ -4,13 +4,15 @@ export const getBizById = bizId => (
   axios.get(`/api/biz/${bizId}`)
 );
 
-export const getBizByCityState = (category, city, state, page) => (
+export const getBizByCityState = (category, city, state, page, prices, sort) => (
   axios.get('/api/biz/city', {
     params: {
       category,
       city,
       state,
-      page
+      page,
+      prices,
+      sort
     }
   })
 );

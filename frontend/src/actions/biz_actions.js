@@ -23,8 +23,8 @@ export const fetchBizById = bizId => dispatch => (
     .catch(err => console.log(err))
 );
 
-export const fetchBizByCityState = (category, city, state, page) => dispatch => (
-  getBizByCityState(category, city, state, page)
+export const fetchBizByCityState = (category, city, state, page, prices, sort) => dispatch => (
+  getBizByCityState(category, city, state, page, prices, sort)
     .then(result => dispatch(receiveBizList(result)))
     .catch(err => console.log(err))
 );
