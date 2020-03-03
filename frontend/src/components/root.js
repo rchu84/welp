@@ -4,9 +4,12 @@ import { HashRouter } from "react-router-dom";
 // We'll create this soon
 import App from './app';
 
+import CssBaseline from "@material-ui/core/CssBaseline";
+
 const Root = ({ store }) => (
   <Provider store={store}>
     <HashRouter>
+      
       <App />
     </HashRouter>
   </Provider>

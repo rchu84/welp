@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Link as RouterLink } from "react-router-dom";
+import NavBar from "../navbar/navbar";
 
 import queryString from "query-string";
 import {
@@ -207,138 +208,141 @@ export default function BizList(props) {
   // if (bizList.length === 0) return null;
 
   return (
-    <div className={classes.root}>
-      <div className={classes.bizListRoot}>
-        <Typography
-          variant="h4"
-          style={{ marginTop: 20, fontWeight: 700 }}
-          gutterBottom
-        >
-          {/* All Results */}
-          {`${values.c} in ${city}, ${state}`}
-        </Typography>
+    <React.Fragment>
+      <NavBar city={city} state={state} />
 
-        <Box display="flex" flexDirection="row" alignItems="center">
-          <div>
-            <Typography
-              variant="h6"
-              style={{ fontWeight: 700, marginRight: 10 }}
-            >
-              Filters:
-            </Typography>
-          </div>
+      <div className={classes.root}>
+        <div className={classes.bizListRoot}>
+          <Typography
+            variant="h4"
+            style={{ marginTop: 20, fontWeight: 700 }}
+            gutterBottom
+          >
+            {/* All Results */}
+            {`${values.c} in ${city}, ${state}`}
+          </Typography>
 
-          <div className={classes.sortMenuRoot}>
-            <List component="nav" aria-label="sort">
-              <ListItem
-                button
-                aria-haspopup="true"
-                aria-controls="lock-menu"
-                aria-label="sort"
-                onClick={handleClickListItemSort}
+          <Box display="flex" flexDirection="row" alignItems="center">
+            <div>
+              <Typography
+                variant="h6"
+                style={{ fontWeight: 700, marginRight: 10 }}
               >
-                <ListItemText
-                  primary={`Sort: ${sortBy[selectedIndexSort]}`}
-                  // secondary={options[selectedIndex]}
-                />
-              </ListItem>
-            </List>
-            <Menu
-              id="lock-menu"
-              anchorEl={anchorElSort}
-              keepMounted
-              open={Boolean(anchorElSort)}
-              onClose={handleCloseSort}
-              variant="menu"
-            >
-              {sortBy.map((option, index) => (
-                <MenuItem
-                  style={{ width: 200 }}
-                  key={option}
-                  // disabled={index === 0}
-                  selected={index === selectedIndexSort}
-                  onClick={event => handleMenuItemClickSort(event, index)}
-                >
-                  {index === selectedIndexSort ? (
-                    <RadioButtonCheckedOutlinedIcon />
-                  ) : (
-                    <RadioButtonUncheckedOutlinedIcon />
-                  )}
-                  {option}
-                </MenuItem>
-              ))}
-            </Menu>
-          </div>
+                Filters:
+              </Typography>
+            </div>
 
-          <div className={classes.priceRangeMenuRoot}>
-            <List component="nav" aria-label="Price">
-              <ListItem
-                button
-                aria-haspopup="true"
-                aria-controls="lock-menu"
-                aria-label="price range"
-                onClick={handleClickListItem}
+            <div className={classes.sortMenuRoot}>
+              <List component="nav" aria-label="sort">
+                <ListItem
+                  button
+                  aria-haspopup="true"
+                  aria-controls="lock-menu"
+                  aria-label="sort"
+                  onClick={handleClickListItemSort}
+                >
+                  <ListItemText
+                    primary={`Sort: ${sortBy[selectedIndexSort]}`}
+                    // secondary={options[selectedIndex]}
+                  />
+                </ListItem>
+              </List>
+              <Menu
+                id="lock-menu"
+                anchorEl={anchorElSort}
+                keepMounted
+                open={Boolean(anchorElSort)}
+                onClose={handleCloseSort}
+                variant="menu"
               >
-                <ListItemText
-                  primary={
-                    selectedIndices.some(index => index)
-                      ? selectedIndices
-                          .map((el, i) =>
-                            el ? dollarSign((i + 1).toString()) : el
-                          )
-                          .filter(el => el)
-                          .reduce((prev, curr) => [prev, ", ", curr])
-                      : "Price"
-                  }
-                  // secondary={options[selectedIndex]}
-                />
-              </ListItem>
-            </List>
-            <Menu
-              id="lock-menu"
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-              variant="menu"
-            >
-              {priceRanges.map((priceRange, index) => (
-                <MenuItem
-                  style={{ width: 150 }}
-                  key={priceRange}
-                  // disabled={index === 0}
-                  selected={selectedIndices[index]}
-                  onClick={event => handleMenuItemClick(event, index)}
-                >
-                  {selectedIndices[index] ? (
-                    <CheckBoxOutlinedIcon />
-                  ) : (
-                    <CheckBoxOutlineBlankOutlinedIcon />
-                  )}{" "}
-                  {priceRange}
-                </MenuItem>
-              ))}
-            </Menu>
-          </div>
-        </Box>
+                {sortBy.map((option, index) => (
+                  <MenuItem
+                    style={{ width: 200 }}
+                    key={option}
+                    // disabled={index === 0}
+                    selected={index === selectedIndexSort}
+                    onClick={event => handleMenuItemClickSort(event, index)}
+                  >
+                    {index === selectedIndexSort ? (
+                      <RadioButtonCheckedOutlinedIcon />
+                    ) : (
+                      <RadioButtonUncheckedOutlinedIcon />
+                    )}
+                    {option}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </div>
 
-        {/* {bizList.length === 0 ? (
+            <div className={classes.priceRangeMenuRoot}>
+              <List component="nav" aria-label="Price">
+                <ListItem
+                  button
+                  aria-haspopup="true"
+                  aria-controls="lock-menu"
+                  aria-label="price range"
+                  onClick={handleClickListItem}
+                >
+                  <ListItemText
+                    primary={
+                      selectedIndices.some(index => index)
+                        ? selectedIndices
+                            .map((el, i) =>
+                              el ? dollarSign((i + 1).toString()) : el
+                            )
+                            .filter(el => el)
+                            .reduce((prev, curr) => [prev, ", ", curr])
+                        : "Price"
+                    }
+                    // secondary={options[selectedIndex]}
+                  />
+                </ListItem>
+              </List>
+              <Menu
+                id="lock-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                variant="menu"
+              >
+                {priceRanges.map((priceRange, index) => (
+                  <MenuItem
+                    style={{ width: 150 }}
+                    key={priceRange}
+                    // disabled={index === 0}
+                    selected={selectedIndices[index]}
+                    onClick={event => handleMenuItemClick(event, index)}
+                  >
+                    {selectedIndices[index] ? (
+                      <CheckBoxOutlinedIcon />
+                    ) : (
+                      <CheckBoxOutlineBlankOutlinedIcon />
+                    )}{" "}
+                    {priceRange}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </div>
+          </Box>
+
+          {/* {bizList.length === 0 ? (
           <Typography variant="h5">No results found</Typography>
         ) : (
           ""
         )} */}
 
-        {bizList.map((biz, idx) => (
-          <div key={biz._id}>
-            {/* {console.log(props.bizList[bizId])} */}
-            <Grid
-              container
-              spacing={4}
-              onMouseEnter={handleMouseEnter(idx)}
-              onMouseLeave={handleMouseLeave(idx)}
-              onClick={() => props.history.push(`/biz/${biz._id}`)}
-            >
-              {/* <Grid item xs={2}>
+          {bizList.map((biz, idx) => (
+            <div key={biz._id}>
+              {/* {console.log(props.bizList[bizId])} */}
+              <Grid
+                container
+                spacing={4}
+                onMouseEnter={handleMouseEnter(idx)}
+                onMouseLeave={handleMouseLeave(idx)}
+                onClick={() => props.history.push(`/biz/${biz._id}`)}
+              >
+                {/* <Grid item xs={2}>
                 <Carousel>
                   {biz.photos.map(photo => (
                     <CardMedia
@@ -351,186 +355,194 @@ export default function BizList(props) {
                 </Carousel>
               </Grid> */}
 
-              <Grid item xs={12}>
-                <Card variant="outlined" style={{ background: "#f5f5f5" }}>
-                  <CardContent>
-                    <Box display="flex" flexDirection="row">
-                      <Box>
-                        {biz.photos.length > 0 ? (
-                          <Carousel
-                            autoPlay={false}
-                            indicators={false}
-                            // animation="slide"
-                          >
-                            {biz.photos.map(photo => (
-                              <CardMedia
-                                key={photo._id}
-                                style={{
-                                  width: 150,
-                                  height: 150,
-                                  borderRadius: 5,
-                                  marginRight: 16
-                                }}
-                                image={
-                                  process.env.PUBLIC_URL +
-                                  `/photos/${photo._id}.jpg`
-                                }
-                              />
-                            ))}
-                          </Carousel>
-                        ) : (
-                          <BusinessOutlinedIcon
-                            style={{
-                              width: 150,
-                              height: 150,
-                              borderRadius: 5,
-                              marginRight: 16
-                            }}
-                          />
-                        )}
-                      </Box>
-                      <CardActionArea>
-                        <Box flexGrow={1}>
-                          <Box display="flex">
-                            <Box flexGrow={1}>
-                              <Typography
-                                variant="h5"
-                                style={{ fontWeight: 700 }}
-                              >
-                                {`${pagingCounter + idx}. ${biz.name}`}
-                              </Typography>
-                            </Box>
-                            <Box>
-                              <Typography variant="caption">
-                                {biz.address}
-                              </Typography>
-                            </Box>
-                          </Box>
-
-                          <Box borderColor="transparent">
-                            <div className={classes.ratingRoot}>
-                              <Rating
-                                name="read-only"
-                                value={biz.stars}
-                                precision={0.5}
-                                readOnly
-                              />
-                              <Box ml={2}>
-                                <Typography component="legend">
-                                  {biz.review_count} reviews
+                <Grid item xs={12}>
+                  <Card variant="outlined" style={{ background: "#f5f5f5" }}>
+                    <CardContent>
+                      <Box display="flex" flexDirection="row">
+                        <Box>
+                          {biz.photos.length > 0 ? (
+                            <Carousel
+                              autoPlay={false}
+                              indicators={false}
+                              // animation="slide"
+                            >
+                              {biz.photos.map(photo => (
+                                <CardMedia
+                                  key={photo._id}
+                                  style={{
+                                    width: 150,
+                                    height: 150,
+                                    borderRadius: 5,
+                                    marginRight: 16
+                                  }}
+                                  image={
+                                    process.env.PUBLIC_URL +
+                                    `/photos/${photo._id}.jpg`
+                                  }
+                                />
+                              ))}
+                            </Carousel>
+                          ) : (
+                            <BusinessOutlinedIcon
+                              style={{
+                                width: 150,
+                                height: 150,
+                                borderRadius: 5,
+                                marginRight: 16
+                              }}
+                            />
+                          )}
+                        </Box>
+                        <CardActionArea>
+                          <Box flexGrow={1}>
+                            <Box display="flex">
+                              <Box flexGrow={1}>
+                                <Typography
+                                  variant="h5"
+                                  style={{ fontWeight: 700 }}
+                                >
+                                  {`${pagingCounter + idx}. ${biz.name}`}
                                 </Typography>
                               </Box>
-                            </div>
-                          </Box>
-
-                          <Box borderColor="transparent">
-                            <div className={classes.categoriesRoot}>
-                              {biz.attributes &&
-                              biz.attributes.RestaurantsPriceRange2 ? (
-                                <Typography variant="subtitle1" gutterBottom>
-                                  {dollarSign(
-                                    biz.attributes.RestaurantsPriceRange2
-                                  )}
-                                  {bull}
+                              <Box>
+                                <Typography variant="caption">
+                                  {biz.address}
                                 </Typography>
-                              ) : (
-                                ""
-                              )}
-                              <Typography variant="subtitle2" gutterBottom>
-                                {biz.categories
-                                  .slice(0, 2)
-                                  .map(category => (
-                                    // <Link
-                                    //   key={category}
-                                    //   href={`/#/c/${biz.city.toLowerCase()}/${category.toLowerCase()}`}
-                                    // >
-                                    <Link
-                                      key={category}
-                                      underline="none"
-                                      component={RouterLink}
-                                      to={
-                                        "/search?c=" +
-                                        encodeURIComponent(category) +
-                                        "&loc=" +
-                                        encodeURIComponent(`${city},${state}`)
-                                      }
-                                      onClick={handleCategoryClick(
-                                        "/search?c=" +
+                              </Box>
+                            </Box>
+
+                            <Box borderColor="transparent">
+                              <div className={classes.ratingRoot}>
+                                <Rating
+                                  name="read-only"
+                                  value={biz.stars}
+                                  precision={0.5}
+                                  readOnly
+                                />
+                                <Box ml={2}>
+                                  <Typography component="legend">
+                                    {biz.review_count} reviews
+                                  </Typography>
+                                </Box>
+                              </div>
+                            </Box>
+
+                            <Box borderColor="transparent">
+                              <div className={classes.categoriesRoot}>
+                                {biz.attributes &&
+                                biz.attributes.RestaurantsPriceRange2 ? (
+                                  <Typography variant="subtitle1" gutterBottom>
+                                    {dollarSign(
+                                      biz.attributes.RestaurantsPriceRange2
+                                    )}
+                                    {bull}
+                                  </Typography>
+                                ) : (
+                                  ""
+                                )}
+                                <Typography variant="subtitle2" gutterBottom>
+                                  {biz.categories
+                                    .slice(0, 2)
+                                    .map(category => (
+                                      // <Link
+                                      //   key={category}
+                                      //   href={`/#/c/${biz.city.toLowerCase()}/${category.toLowerCase()}`}
+                                      // >
+                                      <Link
+                                        key={category}
+                                        underline="none"
+                                        component={RouterLink}
+                                        to={
+                                          "/search?c=" +
                                           encodeURIComponent(category) +
                                           "&loc=" +
                                           encodeURIComponent(`${city},${state}`)
-                                      )}
-                                    >
-                                      {category}
-                                    </Link>
-                                  ))
-                                  .reduce((prev, curr) => [prev, ", ", curr])}
-                              </Typography>
-                            </div>
+                                        }
+                                        onClick={handleCategoryClick(
+                                          "/search?c=" +
+                                            encodeURIComponent(category) +
+                                            "&loc=" +
+                                            encodeURIComponent(
+                                              `${city},${state}`
+                                            )
+                                        )}
+                                      >
+                                        {category}
+                                      </Link>
+                                    ))
+                                    .reduce((prev, curr) => [prev, ", ", curr])}
+                                </Typography>
+                              </div>
+                            </Box>
                           </Box>
-                        </Box>
-                      </CardActionArea>
-                    </Box>
-                  </CardContent>
-                </Card>
+                        </CardActionArea>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
               </Grid>
-            </Grid>
-          </div>
-        ))}
+            </div>
+          ))}
 
-        {bizList.length === 0 ? (
-          ""
-        ) : (
-          <div className={classes.paginationRoot}>
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={handlePageChange}
-            />
-          </div>
-        )}
-      </div>
-
-      <div
-        style={{ height: "100vh", width: "315px", position: "sticky", top: 0 }}
-      >
-        <GoogleMapReact
-          bootstrapURLKeys={{ key: googleMapsApiKey }}
-          defaultCenter={{
-            lat: 33.4942, //props.biz.latitude,
-            lng: -111.9261 //props.biz.longitude
-          }}
-          defaultZoom={13}
-          // yesIWantToUseGoogleMapApiInternals
-          // onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
-          // options={createMapOptions}
-          onChange={handleMapChange}
-        >
-          {bizList.map((biz, idx) =>
-            // <AnyReactComponent
-            //   key={biz._id}
-            //   lat={biz.latitude}
-            //   lng={biz.longitude}
-            //   text="https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png"
-            // />
-            hover === idx ? (
-              <RoomOutlinedIcon
-                key={biz._id}
-                lat={biz.latitude}
-                lng={biz.longitude}
-                fontSize="large"
+          {bizList.length === 0 ? (
+            ""
+          ) : (
+            <div className={classes.paginationRoot}>
+              <Pagination
+                count={totalPages}
+                page={page}
+                onChange={handlePageChange}
               />
-            ) : (
-              <RoomRoundedIcon
-                key={biz._id}
-                lat={biz.latitude}
-                lng={biz.longitude}
-                fontSize="large"
-              />
-            )
+            </div>
           )}
-        </GoogleMapReact>
+        </div>
+
+        <div
+          style={{
+            height: "95vh",
+            width: "315px",
+            position: "sticky",
+            top: 0
+          }}
+        >
+          <GoogleMapReact
+            bootstrapURLKeys={{ key: googleMapsApiKey }}
+            defaultCenter={{
+              lat: 33.4942, //props.biz.latitude,
+              lng: -111.9261 //props.biz.longitude
+            }}
+            defaultZoom={13}
+            // yesIWantToUseGoogleMapApiInternals
+            // onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
+            // options={createMapOptions}
+            onChange={handleMapChange}
+          >
+            {bizList.map((biz, idx) =>
+              // <AnyReactComponent
+              //   key={biz._id}
+              //   lat={biz.latitude}
+              //   lng={biz.longitude}
+              //   text="https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png"
+              // />
+              hover === idx ? (
+                <RoomOutlinedIcon
+                  key={biz._id}
+                  lat={biz.latitude}
+                  lng={biz.longitude}
+                  fontSize="large"
+                />
+              ) : (
+                <RoomRoundedIcon
+                  key={biz._id}
+                  lat={biz.latitude}
+                  lng={biz.longitude}
+                  fontSize="large"
+                />
+              )
+            )}
+          </GoogleMapReact>
+        </div>
       </div>
-    </div>
+    </React.Fragment>
   );
 }

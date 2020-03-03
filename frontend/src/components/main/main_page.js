@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Link as RouterLink } from "react-router-dom";
+import SearchBar from '../search/search_bar';
 import axios from "axios";
 
 import { 
@@ -291,6 +292,9 @@ export default function Main(props) {
           </Button>
         </Grid>
       </Grid>
+
+      {/* <SearchBar city={"Scottsdale"} state={"AZ"} c={null} /> */}
+
 
       <div className={classes.categoriesRoot}>
         <Grid container spacing={3}>

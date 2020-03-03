@@ -3,29 +3,15 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 
 import { Rating, Pagination } from '@material-ui/lab';
-import Box from '@material-ui/core/Box';
-import Divider from "@material-ui/core/Divider";
+import { 
+  Box, Divider, Grid, Paper, Table, TableBody, TableContainer, TableHead,
+  Card, CardActionArea, CardActions, CardContent, CardMedia, Link,
+  Button, GridList, GridListTile, TableRow
+} from '@material-ui/core';
 
 import { Link as RouterLink } from "react-router-dom";
 
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-// import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Card from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import CardMedia from "@material-ui/core/CardMedia";
-import Link from '@material-ui/core/Link';
-import Button from '@material-ui/core/Button';
 import MuiTableCell from "@material-ui/core/TableCell";
-import GridList from "@material-ui/core/GridList";
-import GridListTile from "@material-ui/core/GridListTile";
 
 import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
 import EmojiEmotionsIcon from "@material-ui/icons/EmojiEmotions";
@@ -34,6 +20,8 @@ import StarsIcon from "@material-ui/icons/Stars";
 import PeopleIcon from "@material-ui/icons/People";
 
 import { getReviewsByBizId } from '../../util/biz_api_util';
+
+import NavBar from "../navbar/navbar";
 
 import Carousel from 'react-material-ui-carousel';
 
@@ -225,8 +213,11 @@ export default function BizDetail(props) {
   
 
   return (
-    <div className={classes.root}>
-      {/* <div className={classes.galleryRoot}>
+    <React.Fragment>
+      <NavBar city={props.biz.city} state={props.biz.state} />
+
+      <div className={classes.root}>
+        {/* <div className={classes.galleryRoot}>
         <GridList cellHeight="auto" cols={4} className={classes.gridList}>
           {props.biz.photos.map(photo => (
             <GridListTile cols={4} key={photo._id}>
@@ -236,12 +227,17 @@ export default function BizDetail(props) {
         </GridList>
       </div> */}
 
-      <div className={classes.photosRoot}>
-        <GridList className={classes.photosGridList} cols={props.biz.photos.length < 4 ? props.biz.photos.length : 4.5}>
-          {props.biz.photos.map(photo => (
-            <GridListTile key={photo._id}>
-              <img src={process.env.PUBLIC_URL + `/photos/${photo._id}.jpg`} />
-              {/* <GridListTileBar
+        <div className={classes.photosRoot}>
+          <GridList
+            className={classes.photosGridList}
+            cols={props.biz.photos.length < 4 ? props.biz.photos.length : 4.5}
+          >
+            {props.biz.photos.map(photo => (
+              <GridListTile key={photo._id}>
+                <img
+                  src={process.env.PUBLIC_URL + `/photos/${photo._id}.jpg`}
+                />
+                {/* <GridListTileBar
                 title={tile.title}
                 classes={{
                   root: classes.photosTitleBar,
@@ -253,12 +249,12 @@ export default function BizDetail(props) {
                   </IconButton>
                 }
               /> */}
-            </GridListTile>
-          ))}
-        </GridList>
-      </div>
+              </GridListTile>
+            ))}
+          </GridList>
+        </div>
 
-      {/* <Grid container spacing={2}>
+        {/* <Grid container spacing={2}>
         {props.biz.photos.map(photo => (
           <Grid item xs={3} key={photo._id}>
             <img src={process.env.PUBLIC_URL + `/photos/${photo._id}.jpg`} />
@@ -266,142 +262,142 @@ export default function BizDetail(props) {
         ))}
       </Grid> */}
 
-      <Typography variant="h3" style={{ fontWeight: 700 }}>
-        {props.biz.name}
-      </Typography>
+        <Typography variant="h3" style={{ fontWeight: 700 }}>
+          {props.biz.name}
+        </Typography>
 
-      <Box borderColor="transparent">
-        <div className={classes.ratingRoot}>
-          <Rating
-            name="read-only"
-            value={props.biz.stars}
-            precision={0.5}
-            readOnly
-          />
-          <Box ml={2}>
-            <Typography component="legend">
-              {props.biz.review_count} reviews
+        <Box borderColor="transparent">
+          <div className={classes.ratingRoot}>
+            <Rating
+              name="read-only"
+              value={props.biz.stars}
+              precision={0.5}
+              readOnly
+            />
+            <Box ml={2}>
+              <Typography component="legend">
+                {props.biz.review_count} reviews
+              </Typography>
+            </Box>
+          </div>
+        </Box>
+
+        <Box borderColor="transparent">
+          <div className={classes.categoriesRoot}>
+            {props.biz.attributes &&
+            props.biz.attributes.RestaurantsPriceRange2 ? (
+              <Typography variant="subtitle1" gutterBottom>
+                {dollarSign(props.biz.attributes.RestaurantsPriceRange2)}
+                {bull}
+              </Typography>
+            ) : (
+              ""
+            )}
+
+            <Typography variant="subtitle2" gutterBottom>
+              {props.biz.categories
+                .map(category => (
+                  <Link
+                    key={category}
+                    underline="none"
+                    component={RouterLink}
+                    to={
+                      "/search?c=" +
+                      encodeURIComponent(category) +
+                      "&loc=" +
+                      encodeURIComponent(`${props.biz.city},${props.biz.state}`)
+                    }
+                  >
+                    {category}
+                  </Link>
+                ))
+                .reduce((prev, curr) => [prev, ", ", curr])}
             </Typography>
-          </Box>
-        </div>
-      </Box>
+          </div>
+        </Box>
 
-      <Box borderColor="transparent">
-        <div className={classes.categoriesRoot}>
-          {props.biz.attributes &&
-          props.biz.attributes.RestaurantsPriceRange2 ? (
-            <Typography variant="subtitle1" gutterBottom>
-              {dollarSign(props.biz.attributes.RestaurantsPriceRange2)}
-              {bull}
-            </Typography>
-          ) : (
-            ""
-          )}
+        <Divider />
 
-          <Typography variant="subtitle2" gutterBottom>
-            {props.biz.categories
-              .map(category => (
-                <Link
-                  key={category}
-                  underline="none"
-                  component={RouterLink}
-                  to={
-                    "/search?c=" +
-                    encodeURIComponent(category) +
-                    "&loc=" +
-                    encodeURIComponent(`${props.biz.city},${props.biz.state}`)
-                  }
-                >
-                  {category}
-                </Link>
-              ))
-              .reduce((prev, curr) => [prev, ", ", curr])}
-          </Typography>
-        </div>
-      </Box>
+        <Typography variant="h6" style={{ fontWeight: 700 }}>
+          Location & Hours
+        </Typography>
 
-      <Divider />
-
-      <Typography variant="h6" style={{ fontWeight: 700 }}>
-        Location & Hours
-      </Typography>
-
-      <div className={classes.locationRoot}>
-        <Grid
-          container
-          spacing={2}
-          justify="center"
-          className={classes.locationPos}
-        >
-          <Grid item xs={6}>
-            <Card className={classes.addressCard} variant="outlined">
-              {/* <CardActionArea> */}
-              <CardMedia
-                className={classes.addressCardMedia}
-                image={process.env.PUBLIC_URL + "/staticmap.png"}
-                title="Contemplative Reptile"
-              />
-              <CardContent>
-                <Typography variant="body2" component="p">
-                  {props.biz.address}
-                </Typography>
-                <Typography variant="body2" component="p">
-                  {props.biz.city}, {props.biz.state} {props.biz.postal_code}
-                </Typography>
-              </CardContent>
-              {/* </CardActionArea> */}
-            </Card>
-          </Grid>
-
-          {props.biz.hours ? (
+        <div className={classes.locationRoot}>
+          <Grid
+            container
+            spacing={2}
+            justify="center"
+            className={classes.locationPos}
+          >
             <Grid item xs={6}>
-              <TableContainer>
-                <Table
-                  size="small"
-                  aria-label="simple table"
-                  className={classes.hoursTable}
-                >
-                  <TableBody>
-                    {Object.keys(props.biz.hours).map(key => (
-                      <TableRow key={key}>
-                        <TableCell component="th" scope="row">
-                          <Box fontWeight="fontWeightBold">
-                            {key.slice(0, 3)}
-                          </Box>
-                        </TableCell>
-                        <TableCell align="right">
-                          {props.biz.hours[key]
-                            .split("-")
-                            .every((val, i, arr) => val === arr[0])
-                            ? "24 hours"
-                            : props.biz.hours[key]
-                                .split("-")
-                                .map(time =>
-                                  new Date(
-                                    null,
-                                    null,
-                                    null,
-                                    ...time.split(":")
-                                  ).toLocaleTimeString(navigator.language, {
-                                    hour: "2-digit",
-                                    minute: "2-digit"
-                                  })
-                                )
-                                .reduce((prev, curr) => [prev, " - ", curr])}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <Card className={classes.addressCard} variant="outlined">
+                {/* <CardActionArea> */}
+                <CardMedia
+                  className={classes.addressCardMedia}
+                  image={process.env.PUBLIC_URL + "/staticmap.png"}
+                  title="Contemplative Reptile"
+                />
+                <CardContent>
+                  <Typography variant="body2" component="p">
+                    {props.biz.address}
+                  </Typography>
+                  <Typography variant="body2" component="p">
+                    {props.biz.city}, {props.biz.state} {props.biz.postal_code}
+                  </Typography>
+                </CardContent>
+                {/* </CardActionArea> */}
+              </Card>
             </Grid>
-          ) : (
-            ""
-          )}
-        </Grid>
-      </div>
 
-      {/* <img
+            {props.biz.hours ? (
+              <Grid item xs={6}>
+                <TableContainer>
+                  <Table
+                    size="small"
+                    aria-label="simple table"
+                    className={classes.hoursTable}
+                  >
+                    <TableBody>
+                      {Object.keys(props.biz.hours).map(key => (
+                        <TableRow key={key}>
+                          <TableCell component="th" scope="row">
+                            <Box fontWeight="fontWeightBold">
+                              {key.slice(0, 3)}
+                            </Box>
+                          </TableCell>
+                          <TableCell align="right">
+                            {props.biz.hours[key]
+                              .split("-")
+                              .every((val, i, arr) => val === arr[0])
+                              ? "24 hours"
+                              : props.biz.hours[key]
+                                  .split("-")
+                                  .map(time =>
+                                    new Date(
+                                      null,
+                                      null,
+                                      null,
+                                      ...time.split(":")
+                                    ).toLocaleTimeString(navigator.language, {
+                                      hour: "2-digit",
+                                      minute: "2-digit"
+                                    })
+                                  )
+                                  .reduce((prev, curr) => [prev, " - ", curr])}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Grid>
+            ) : (
+              ""
+            )}
+          </Grid>
+        </div>
+
+        {/* <img
         src={googleMapsStaticURL(
           props.biz.latitude,
           props.biz.longitude,
@@ -409,105 +405,113 @@ export default function BizDetail(props) {
         )}
       /> */}
 
-      <Divider />
+        <Divider />
 
-      <Typography variant="h6" style={{ fontWeight: 700 }}>
-        Reviews
-      </Typography>
+        <Typography variant="h6" style={{ fontWeight: 700 }}>
+          Reviews
+        </Typography>
 
-      {reviews.map(review => (
-        <div key={review._id}>
-          <Grid container justify="center" spacing={0}>
-            <Grid item xs={2}>
-              <Card elevation={0}>
-                <CardContent style={{ background: "#f5f5f5" }}>
-                  <Box
-                    fontWeight="fontWeightBold"
-                    style={{ marginTop: 5, marginBottom: 5 }}
-                  >
-                    {review.user_id.name}
-                  </Box>
-                  <Typography variant="caption" className={classes.ratingRoot}>
-                    <StarsIcon style={{ fontSize: 16 }} />
-                    <Box ml={1}>{`${review.user_id.review_count}`} reviews</Box>
-                  </Typography>
-                  <Typography variant="caption" className={classes.ratingRoot}>
-                    <PeopleIcon style={{ fontSize: 16 }} />
-                    <Box ml={1}>
-                      {`${review.user_id.friends.split(", ").length}`} friends
+        {reviews.map(review => (
+          <div key={review._id}>
+            <Grid container justify="center" spacing={0}>
+              <Grid item xs={2}>
+                <Card elevation={0}>
+                  <CardContent style={{ background: "#f5f5f5" }}>
+                    <Box
+                      fontWeight="fontWeightBold"
+                      style={{ marginTop: 5, marginBottom: 5 }}
+                    >
+                      {review.user_id.name}
                     </Box>
-                  </Typography>
-                </CardContent>
-              </Card>
-              {/* <Paper className={classes.paper} elevation={0}>
+                    <Typography
+                      variant="caption"
+                      className={classes.ratingRoot}
+                    >
+                      <StarsIcon style={{ fontSize: 16 }} />
+                      <Box ml={1}>
+                        {`${review.user_id.review_count}`} reviews
+                      </Box>
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      className={classes.ratingRoot}
+                    >
+                      <PeopleIcon style={{ fontSize: 16 }} />
+                      <Box ml={1}>
+                        {`${review.user_id.friends.split(", ").length}`} friends
+                      </Box>
+                    </Typography>
+                  </CardContent>
+                </Card>
+                {/* <Paper className={classes.paper} elevation={0}>
               
             </Paper> */}
+              </Grid>
+
+              <Grid item xs={10}>
+                <Card elevation={0} style={{ background: "#f5f5f5" }}>
+                  <CardContent>
+                    <div className={classes.reviewRoot}>
+                      <Rating
+                        name="read-only"
+                        value={review.stars}
+                        precision={0.5}
+                        readOnly
+                        style={{ marginBottom: 3 }}
+                      />
+                      {/* <Typography variant="caption"> */}
+                      <Box ml={2}>
+                        <Typography variant="body2">
+                          {new Date(review.date).toLocaleDateString()}
+                        </Typography>
+                      </Box>
+                      {/* </Typography> */}
+                    </div>
+
+                    <Typography variant="body2" component="p">
+                      {review.text}
+                    </Typography>
+                  </CardContent>
+                  <CardActions className={classes.pos}>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<EmojiObjectsIcon />}
+                    >
+                      Useful{review.useful > 0 ? ` ${review.useful}` : ""}
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<EmojiEmotionsIcon />}
+                    >
+                      Funny{review.funny > 0 ? ` ${review.funny}` : ""}
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<MoodIcon />}
+                    >
+                      Cool{review.cool > 0 ? ` ${review.cool}` : ""}
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
             </Grid>
 
-            <Grid item xs={10}>
-              <Card elevation={0} style={{ background: "#f5f5f5" }}>
-                <CardContent>
-                  <div className={classes.reviewRoot}>
-                    <Rating
-                      name="read-only"
-                      value={review.stars}
-                      precision={0.5}
-                      readOnly
-                      style={{ marginBottom: 3 }}
-                    />
-                    {/* <Typography variant="caption"> */}
-                    <Box ml={2}>
-                      <Typography variant="body2">
-                        {new Date(review.date).toLocaleDateString()}
-                      </Typography>
-                    </Box>
-                    {/* </Typography> */}
-                  </div>
+            <Divider />
+          </div>
+        ))}
 
-                  <Typography variant="body2" component="p">
-                    {review.text}
-                  </Typography>
-                </CardContent>
-                <CardActions className={classes.pos}>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    startIcon={<EmojiObjectsIcon />}
-                  >
-                    Useful{review.useful > 0 ? ` ${review.useful}` : ""}
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    startIcon={<EmojiEmotionsIcon />}
-                  >
-                    Funny{review.funny > 0 ? ` ${review.funny}` : ""}
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    startIcon={<MoodIcon />}
-                  >
-                    Cool{review.cool > 0 ? ` ${review.cool}` : ""}
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          </Grid>
-
-          <Divider />
+        <div className={classes.paginationRoot}>
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={handlePageChange}
+          />
         </div>
-      ))}
 
-      <div className={classes.paginationRoot}>
-        <Pagination
-          count={totalPages}
-          page={page}
-          onChange={handlePageChange}
-        />
-      </div>
-
-      {/* <div style={{ height: "315px", width: "315px" }}>
+        {/* <div style={{ height: "315px", width: "315px" }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: googleMapsApiKey }}
           defaultCenter={{
@@ -524,6 +528,7 @@ export default function BizDetail(props) {
           />
         </GoogleMapReact>
       </div> */}
-    </div>
+      </div>
+    </React.Fragment>
   );
 };
