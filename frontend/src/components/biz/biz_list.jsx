@@ -204,7 +204,7 @@ export default function BizList(props) {
     setHover(null);
   };
 
-  if (bizList.length === 0) return null;
+  // if (bizList.length === 0) return null;
 
   return (
     <div className={classes.root}>
@@ -321,6 +321,12 @@ export default function BizList(props) {
             </Menu>
           </div>
         </Box>
+
+        {/* {bizList.length === 0 ? (
+          <Typography variant="h5">No results found</Typography>
+        ) : (
+          ""
+        )} */}
 
         {bizList.map((biz, idx) => (
           <div key={biz._id}>
@@ -472,13 +478,17 @@ export default function BizList(props) {
           </div>
         ))}
 
-        <div className={classes.paginationRoot}>
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={handlePageChange}
-          />
-        </div>
+        {bizList.length === 0 ? (
+          ""
+        ) : (
+          <div className={classes.paginationRoot}>
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={handlePageChange}
+            />
+          </div>
+        )}
       </div>
 
       <div
@@ -503,7 +513,7 @@ export default function BizList(props) {
             //   lng={biz.longitude}
             //   text="https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png"
             // />
-            hover == idx ? (
+            hover === idx ? (
               <RoomOutlinedIcon
                 key={biz._id}
                 lat={biz.latitude}

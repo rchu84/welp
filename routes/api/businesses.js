@@ -2,6 +2,7 @@ import express from 'express';
 import Business from '../../models/Business';
 import Photo from '../../models/Photo';
 import Review from '../../models/Review';
+import Tip from '../../models/Tip';
 import User from '../../models/User';
 import mongoose from 'mongoose';
 
@@ -13,7 +14,11 @@ const router = express.Router();
 router.get("/test", (req, res) => res.json({ msg: "This is the businesses route" }));
 
 router.get("/cities", (req, res) => {
-  Business.distinct("city")
+  // Business.distinct("city")
+  Business.aggregate([
+      { $group: { _id: { city: '$city', state: '$state' }}},
+      { $sort: { "_id.state": 1, "_id.city": 1 }}
+    ])
     .then(categories => res.json(categories))
     .catch(err =>
       res.status(404).json({ nocategoriesfound: "No categories found" })
@@ -21,7 +26,7 @@ router.get("/cities", (req, res) => {
 });
 
 router.get("/categories", (req, res) => {
-  Business.distinct("categories.0")
+  Business.distinct("categories")
     .then(categories => res.json(categories))
     .catch(err =>
       res.status(404).json({ nocategoriesfound: "No categories found" })
@@ -140,6 +145,30 @@ router.get("/:id/reviews", (req, res) => {
       res
         .status(404)
         .json({ nobusinessfound: "No reviews found with that ID" })
+    );
+});
+
+router.get("/:id/tips", (req, res) => {
+  let query = {
+    business_id: req.params.id
+  };
+  let options = {
+    // populate: ['photos', {
+    //   path: "tips",
+    //   populate: { path: "user_id" },
+    //   options: { sort: { date: -1 }}
+    // }],
+    sort: { date: -1 },
+    populate: "user_id",
+    limit: 20,
+    page: req.query.page || 1,
+    lean: true
+  };
+
+  Tip.paginate(query, options)
+    .then(tips => res.json(tips))
+    .catch(err =>
+      res.status(404).json({ nobusinessfound: "No tips found with that ID" })
     );
 });
 

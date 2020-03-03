@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Link as RouterLink } from "react-router-dom";
+import axios from "axios";
 
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Link from "@material-ui/core/Link"
+import { 
+  Grid, Paper, Link, TextField, CircularProgress, Button
+ } from "@material-ui/core";
+
+import Autocomplete from "@material-ui/lab/Autocomplete";
+
 
 import RestaurantIcon from "@material-ui/icons/Restaurant";
 import ShoppingBasketIcon from "@material-ui/icons/ShoppingBasket";
@@ -58,7 +62,7 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-export default function Main() {
+export default function Main(props) {
   const classes = useStyles();
   const [map, setMap] = useState(null)
   // const [zoom, setZoom] = useState(13);
@@ -67,6 +71,78 @@ export default function Main() {
 
   const [city, setCity] = useState("Scottsdale");
   const [state, setState] = useState("AZ");
+  const [c, setC] = useState(null);
+
+  const [openFind, setOpenFind] = useState(false);
+  const [optionsFind, setOptionsFind] = useState([]);
+  const loadingFind = openFind && optionsFind.length === 0;
+
+  const [openNear, setOpenNear] = useState(false);
+  const [optionsNear, setOptionsNear] = useState([]);
+  const loadingNear = openNear && optionsNear.length === 0;
+
+  useEffect(() => {
+    let active = true;
+
+    if (!loadingFind) {
+      return undefined;
+    }
+
+    if (optionsFind.length === 0) {
+      (async () => {
+        // axios.get(`/api/biz/${bizId}`);
+        const response = await axios.get("/api/biz/categories");
+        console.log(response);
+        const categories = response.data;
+
+        if (active) {
+          setOptionsFind(categories);
+        }
+      })();
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [loadingFind]);
+
+  useEffect(() => {
+    let active = true;
+
+    if (!loadingNear) {
+      return undefined;
+    }
+
+    if (optionsNear.length === 0) {
+      (async () => {
+        const response = await axios.get("/api/biz/cities");
+        console.log(response);
+        const cities = response.data.map(
+          datum => `${datum._id.city}, ${datum._id.state}`
+        );
+
+        if (active) {
+          setOptionsNear(cities);
+        }
+      })();
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [loadingNear]);
+
+  // useEffect(() => {
+  //   if (!openFind) {
+  //     setOptionsFind([]);
+  //   }
+  // }, [openFind]);
+
+  // useEffect(() => {
+  //   if (!openNear) {
+  //     setOptionsNear([]);
+  //   }
+  // }, [openNear]);
 
   // const handleApiLoaded = (map, maps) => {
   //   // use map and maps objects
@@ -79,6 +155,16 @@ export default function Main() {
     setMap(map);
   };
 
+  const handleSearch = () => {
+    console.log(`${c}, ${city}, ${state}`);
+    props.history.push(
+      "/search?c=" +
+        encodeURIComponent(c) +
+        "&loc=" +
+        encodeURIComponent(`${city},${state}`)
+    );
+  };
+
   const handleCategoryClick = () => {
 
   };
@@ -89,7 +175,7 @@ export default function Main() {
         Welp - A Yelp Clone
       </Typography>
 
-      <div
+      {/* <div
         style={{ height: 600, width: "80%", margin: "auto", marginBottom: 40 }}
       >
         <GoogleMapReact
@@ -104,13 +190,107 @@ export default function Main() {
           // options={createMapOptions}
           onChange={handleMapChange}
         >
-          {/* <AnyReactComponent
+          <AnyReactComponent
             lat={props.biz.latitude}
             lng={props.biz.longitude}
             text="https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png"
-          /> */}
+          />
         </GoogleMapReact>
-      </div>
+      </div> */}
+
+      <Grid container spacing={1} style={{ marginBottom: 20 }}>
+        <Grid item xs={8}>
+          <Autocomplete
+            id="asynchronous-demo"
+            open={openFind}
+            onOpen={() => {
+              setOpenFind(true);
+            }}
+            onClose={() => {
+              setOpenFind(false);
+            }}
+            getOptionSelected={(option, value) => option === value}
+            getOptionLabel={option => option}
+            options={optionsFind}
+            onChange={(e, v) => setC(v)}
+            loading={loadingFind}
+            renderInput={params => (
+              <TextField
+                style={{ width: "100%" }}
+                {...params}
+                label="Restaurants, Spas, Shopping..."
+                variant="outlined"
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <React.Fragment>
+                      {loadingFind ? (
+                        <CircularProgress color="inherit" size={20} />
+                      ) : null}
+                      {params.InputProps.endAdornment}
+                    </React.Fragment>
+                  )
+                }}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <Autocomplete
+            id="asynchronous-demo"
+            open={openNear}
+            onOpen={() => {
+              setOpenNear(true);
+            }}
+            onClose={() => {
+              setOpenNear(false);
+            }}
+            getOptionSelected={(option, value) => option === value}
+            getOptionLabel={option => option}
+            options={optionsNear}
+            loading={loadingNear}
+            onChange={(e, v) => {
+              console.log(v);
+              if (v) {
+                let vals = v.split(", ");
+                setCity(vals[0]);
+                setState(vals[1]);
+              }
+            }}
+            value={`${city}, ${state}`}
+            renderInput={params => (
+              <TextField
+                style={{ width: "100%" }}
+                {...params}
+                label="City, State"
+                variant="outlined"
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <React.Fragment>
+                      {loadingNear ? (
+                        <CircularProgress color="inherit" size={20} />
+                      ) : null}
+                      {params.InputProps.endAdornment}
+                    </React.Fragment>
+                  )
+                }}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={1}>
+          <Button 
+            variant="contained" 
+            color="secondary"
+            onClick={handleSearch}
+            style={{height: 56}}
+            disabled={!(c && city && state)}
+          >
+            Find
+          </Button>
+        </Grid>
+      </Grid>
 
       <div className={classes.categoriesRoot}>
         <Grid container spacing={3}>
@@ -119,7 +299,12 @@ export default function Main() {
               <Link
                 underline="none"
                 component={RouterLink}
-                to={"/search?c=" + encodeURIComponent(category) + "&loc=" + encodeURIComponent(`${city},${state}`)}
+                to={
+                  "/search?c=" +
+                  encodeURIComponent(category) +
+                  "&loc=" +
+                  encodeURIComponent(`${city},${state}`)
+                }
               >
                 <Paper className={classes.paper}>
                   {categories[category]}
