@@ -3,9 +3,9 @@ import axios from 'axios';
 import { Grid, TextField, Button, CircularProgress } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Autocomplete } from '@material-ui/lab'
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-const SearchBar = props => {
+export default function SearchBar(props) {
 
   const [city, setCity] = useState(props.city);
   const [state, setState] = useState(props.state);
@@ -19,9 +19,11 @@ const SearchBar = props => {
   const [optionsNear, setOptionsNear] = useState([]);
   const loadingNear = openNear && optionsNear.length === 0;
 
+  const history = useHistory();
+
   const handleSearch = () => {
     console.log(`${c}, ${city}, ${state}`);
-    props.history.push(
+    history.push(
       "/search?c=" +
         encodeURIComponent(c) +
         "&loc=" +
@@ -176,5 +178,3 @@ const SearchBar = props => {
     </Grid>
   );
 }
-
-export default withRouter(SearchBar);

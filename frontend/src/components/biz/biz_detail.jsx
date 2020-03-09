@@ -6,13 +6,10 @@ import { Rating, Pagination } from '@material-ui/lab';
 import { 
   Box, Divider, Grid, Paper, Table, TableBody, TableContainer, TableHead,
   Card, CardActionArea, CardActions, CardContent, CardMedia, Link,
-  Button, GridList, GridListTile, TableRow
+  Button, GridList, GridListTile, TableRow, TableCell as MuiTableCell
 } from '@material-ui/core';
 
 import { Link as RouterLink } from "react-router-dom";
-
-import MuiTableCell from "@material-ui/core/TableCell";
-
 import EmojiObjectsIcon from "@material-ui/icons/EmojiObjects";
 import EmojiEmotionsIcon from "@material-ui/icons/EmojiEmotions";
 import MoodIcon from "@material-ui/icons/Mood";
@@ -22,8 +19,6 @@ import PeopleIcon from "@material-ui/icons/People";
 import { getReviewsByBizId } from '../../util/biz_api_util';
 
 import NavBar from "../navbar/navbar";
-
-import Carousel from 'react-material-ui-carousel';
 
 // https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png
 
@@ -44,10 +39,6 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "space-around",
     overflow: "hidden",
     backgroundColor: theme.palette.background.paper
-  },
-
-  carouselRoot: {
-    height: 212
   },
 
   gridList: {
