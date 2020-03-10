@@ -5,11 +5,12 @@ import { HashRouter } from "react-router-dom";
 import App from './app';
 
 import CssBaseline from "@material-ui/core/CssBaseline";
+import ScrollToTop from "./scroll_to_top";
 
 const Root = ({ store }) => (
   <Provider store={store}>
     <HashRouter>
-      
+      <ScrollToTop />
       <App />
     </HashRouter>
   </Provider>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Link as RouterLink } from "react-router-dom";
-import NavBar from "../navbar/navbar";
+import NavBarContainer from '../navbar/navbar_container';
 
 import queryString from "query-string";
 import {
@@ -110,6 +110,7 @@ const sortBy = [
 const AnyReactComponent = ({ text }: any) => <img src={text} />;
 
 export default function BizList(props) {
+  // console.log(props.location);
   const classes = useStyles();
   const values = queryString.parse(props.location.search);
   const [city, state] = values.loc.split(",");
@@ -175,7 +176,8 @@ export default function BizList(props) {
         setPagingCounter(results.results.data.pagingCounter);
         setTotalPages(results.results.data.totalPages);
         setBizList(results.results.data.docs);
-      });
+      })
+      .catch(err => console.log(err));
   };
 
   const handleCategoryClick = url => e => {
@@ -209,7 +211,7 @@ export default function BizList(props) {
 
   return (
     <React.Fragment>
-      <NavBar city={city} state={state} />
+      <NavBarContainer city={city} state={state} />
 
       <div className={classes.root}>
         <div className={classes.bizListRoot}>

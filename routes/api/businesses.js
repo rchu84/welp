@@ -66,7 +66,7 @@ router.get("/city", (req, res) => {
     lean: true
   };
 
-  console.log(req.query);
+  // console.log(req.query);
   if (req.query.sort) {
     if (req.query.sort === "1") {
       options["sort"] = {
@@ -80,7 +80,7 @@ router.get("/city", (req, res) => {
     }
   };
 
-  console.log(options);
+  // console.log(options);
 
   Business.paginate(query, options)
     .then(biz => res.json(biz))

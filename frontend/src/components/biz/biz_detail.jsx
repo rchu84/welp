@@ -18,7 +18,7 @@ import PeopleIcon from "@material-ui/icons/People";
 
 import { getReviewsByBizId } from '../../util/biz_api_util';
 
-import NavBar from "../navbar/navbar";
+import NavBarContainer from '../navbar/navbar_container';
 
 // https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png
 
@@ -179,11 +179,13 @@ export default function BizDetail(props) {
   });
 
   const fetchReviews = page => {
-    getReviewsByBizId(props.match.params.bizId, page).then(results => {
+    getReviewsByBizId(props.match.params.bizId, page)
+      .then(results => {
       setPagingCounter(results.data.pagingCounter);
       setTotalPages(results.data.totalPages);
       setReviews(results.data.docs);
-    });
+    })
+      .catch(err => console.log(err));
   };
 
   const handlePageChange = (event, value) => {
@@ -205,7 +207,7 @@ export default function BizDetail(props) {
 
   return (
     <React.Fragment>
-      <NavBar city={props.biz.city} state={props.biz.state} />
+      <NavBarContainer city={props.biz.city} state={props.biz.state} />
 
       <div className={classes.root}>
         {/* <div className={classes.galleryRoot}>
