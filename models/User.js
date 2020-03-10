@@ -7,7 +7,12 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
-  name: String,
+  name: {
+    type: String,
+    required: true,
+    index: true
+  },
+  password: String,
   review_count: Number,
   yelping_since: {
     type: Date,
