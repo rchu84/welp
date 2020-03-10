@@ -54,7 +54,7 @@ export default function SearchBar(props) {
     return () => {
       active = false;
     };
-  }, [loadingFind]);
+  }, [loadingFind, loadingFind.length]);
 
   useEffect(() => {
     let active = true;
@@ -80,13 +80,13 @@ export default function SearchBar(props) {
     return () => {
       active = false;
     };
-  }, [loadingNear]);
+  }, [loadingNear, loadingNear.length]);
 
   return (
     <Grid container spacing={1} style={{ marginTop: 10, marginBottom: 10 }}>
       <Grid item xs={8}>
         <Autocomplete
-          id="asynchronous-demo"
+          id="search-category"
           open={openFind}
           onOpen={() => {
             setOpenFind(true);
@@ -122,7 +122,7 @@ export default function SearchBar(props) {
       </Grid>
       <Grid item xs={3}>
         <Autocomplete
-          id="asynchronous-demo"
+          id="search-city-state"
           open={openNear}
           onOpen={() => {
             setOpenNear(true);

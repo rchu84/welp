@@ -18,9 +18,13 @@ export const getBizByCityState = (category, city, state, page, prices, sort) => 
 );
 
 export const getReviewsByBizId = (bizId, page) => (
-  axios.get(`api/biz/${bizId}/reviews`, {
+  axios.get(`/api/biz/${bizId}/reviews`, {
     params: {
       page
     }
   })
+);
+
+export const postReviewByBizId = (bizId, data) => (
+  axios.post(`/api/biz/${bizId}/reviews`, data)
 );

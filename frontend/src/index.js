@@ -6,7 +6,8 @@ import configureStore from './store/store';
 import jwt_decode from 'jwt-decode';
 import * as serviceWorker from './serviceWorker';
 import { setAuthToken } from './util/session_api_util';
-import { logout } from './actions/session_actions';
+import { logout, current } from './actions/session_actions';
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -43,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Testing only!!
   window.getState = store.getState
   window.dispatch = store.dispatch
+  window.current = current;
   // -------------
 
   const root = document.getElementById("root");

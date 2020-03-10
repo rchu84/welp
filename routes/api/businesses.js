@@ -5,6 +5,7 @@ import Review from '../../models/Review';
 import Tip from '../../models/Tip';
 import User from '../../models/User';
 import mongoose from 'mongoose';
+import passport from 'passport';
 
 const router = express.Router();
 
@@ -147,6 +148,73 @@ router.get("/:id/reviews", (req, res) => {
         .json({ nobusinessfound: "No reviews found with that ID" })
     );
 });
+
+router.post(
+  "/:id/reviews",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    // const { errors, isValid } = validateTweetInput(req.body);
+
+    // if (!isValid) {
+    //   return res.status(400).json(errors);
+    // }
+    // _id: {
+    //   type: String,
+    //     required: true
+    // },
+    // user_id: {
+    //   type: String,
+    //     ref: "User",
+    //       required: true,
+    //         index: true
+    // },
+    // business_id: {
+    //   type: String,
+    //     ref: "Business",
+    //       required: true,
+    //         index: true
+    // },
+    // stars: Number,
+    //   useful: Number,
+    //     funny: Number,
+    //       cool: Number,
+    //         text: String,
+    //           date: {
+    //   type: Date,
+    // default: Date.now
+    // }
+    const newId = new mongoose.Types.ObjectId();
+
+    const newReview = new Review({
+      _id: newId,
+      user_id: req.user._id,
+      business_id: req.params.id,
+      text: req.body.text,
+      stars: req.body.stars
+    });
+
+    newReview.save()
+      .then(review => {
+        User.findOne({ _id: req.user._id }, (err, user) => {
+          user.setNext('user_review_count', (err, user) => {
+            if (err) console.log('Cannot increment review_count because ', err);
+          });
+        });
+        Business.findOne({ _id: req.params.id }, (err, biz) => {
+          biz.setNext("biz_review_count", (err, biz) => {
+            if (err) console.log("Cannot increment review_count because ", err);
+          });
+        });
+        return res.json(review);
+      })
+      .catch(err =>
+        res.status(404)
+          .json({ review: "Error - Please try again" })
+      );;
+  }
+);
+
+module.exports = router;
 
 router.get("/:id/tips", (req, res) => {
   let query = {

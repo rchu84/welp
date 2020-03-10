@@ -13,6 +13,7 @@ const db = require("./config/keys").mongoURI;
 // import routes
 
 // set up DB
+const AutoIncrement = require("mongoose-sequence")(mongoose);
 mongoose
   .connect(db, { 
     useNewUrlParser: true, 

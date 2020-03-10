@@ -54,3 +54,11 @@ export const logout = () => (dispatch) => {
   APIUtil.setAuthToken(false)
   dispatch(logoutUser())
 };
+
+export const current = () => dispatch =>
+  APIUtil.current().then(
+    res => {
+      dispatch(receiveCurrentUser(res.data));
+    },
+    err => dispatch(receiveErrors(err.response.data))
+  );

@@ -20,10 +20,22 @@ const ReviewSchema = new Schema({
     required: true,
     index: true
   },
-  stars: Number,
-  useful: Number,
-  funny: Number,
-  cool: Number,
+  stars: {
+    type: Number,
+    required: true
+  },
+  useful: {
+    type: Number,
+    default: 0
+  },
+  funny: {
+    type: Number,
+    default: 0
+  },
+  cool: {
+    type: Number,
+    default: 0
+  },
   text: String,
   date: {
     type: Date,
@@ -31,6 +43,7 @@ const ReviewSchema = new Schema({
   }
 });
 
+// ReviewSchema.index({ user_id: 1, business_id: 1}, { unique: true });
 ReviewSchema.plugin(mongoosePaginate);
 
 const Review = mongoose.model("Review", ReviewSchema, "review");

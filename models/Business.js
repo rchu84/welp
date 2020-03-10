@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import mongoosePaginate from "mongoose-paginate-v2";
 
 const Schema = mongoose.Schema;
+const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const BusinessSchema = new Schema({
   _id: {
@@ -56,6 +57,11 @@ BusinessSchema.set('toObject', { virtuals: true });
 BusinessSchema.set('toJSON', { virtuals: true });
 
 BusinessSchema.plugin(mongoosePaginate);
+BusinessSchema.plugin(AutoIncrement, {
+  id: 'biz_review_count',
+  inc_field: "review_count",
+  disable_hooks: true
+});
 
 const Business = mongoose.model('Business', BusinessSchema, "business");
 module.exports = Business;

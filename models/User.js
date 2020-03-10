@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
+const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const UserSchema = new Schema({
   _id: {
@@ -13,17 +14,36 @@ const UserSchema = new Schema({
     index: true
   },
   password: String,
-  review_count: Number,
+
+  review_count: {
+    type: Number,
+    default: 0
+  },
   yelping_since: {
     type: Date,
     default: Date.now
   },
-  useful: Number,
-  funny: Number,
-  cool: Number,
+  useful: {
+    type: Number,
+    default: 0
+  },
+  funny: {
+    type: Number,
+    default: 0
+  },
+  cool: {
+    type: Number,
+    default: 0
+  },
   elite: String,
-  friends: String,
-  fans: Number,
+  friends: {
+    type: String,
+    default: ""
+  },
+  fans: {
+    type: Number,
+    default: 0
+  },
   average_stars: Number,
   compliment_hot: Number,
   compliment_more: Number,
@@ -38,5 +58,21 @@ const UserSchema = new Schema({
   compliment_photos: Number
 });
 
+UserSchema.virtual("reviews", {
+  ref: "Review",
+  localField: "_id",
+  foreignField: "user_id"
+});
+
+UserSchema.set("toObject", { virtuals: true });
+UserSchema.set("toJSON", { virtuals: true });
+
+
+UserSchema.plugin(AutoIncrement, {
+  id: 'user_review_count',
+  inc_field: "review_count",
+  disable_hooks: true
+});
 const User = mongoose.model("User", UserSchema, "user");
+
 module.exports = User;

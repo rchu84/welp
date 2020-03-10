@@ -5,7 +5,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { Rating, Pagination } from '@material-ui/lab';
 import { 
   Box, Divider, Grid, Paper, Table, TableBody, TableContainer, TableHead,
-  Card, CardActionArea, CardActions, CardContent, CardMedia, Link,
+  Card, CardActionArea, CardActions, CardContent, CardMedia, Link, TextField,
   Button, GridList, GridListTile, TableRow, TableCell as MuiTableCell
 } from '@material-ui/core';
 
@@ -16,7 +16,7 @@ import MoodIcon from "@material-ui/icons/Mood";
 import StarsIcon from "@material-ui/icons/Stars";
 import PeopleIcon from "@material-ui/icons/People";
 
-import { getReviewsByBizId } from '../../util/biz_api_util';
+import { getReviewsByBizId, postReviewByBizId } from '../../util/biz_api_util';
 
 import NavBarContainer from '../navbar/navbar_container';
 
@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
   },
 
   reviewRoot: {
-    width: 200,
+    width: 400,
     display: "flex",
     alignItems: "center"
   },
@@ -121,7 +121,13 @@ const useStyles = makeStyles(theme => ({
   photosTitleBar: {
     background:
       "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
-  }
+  },
+  reviewBodyRoot: {
+    '& .MuiTextField-root': {
+      // margin: theme.spacing(1),
+      width: "100%",
+    },
+  },
 }));
 
 const TableCell = withStyles({
@@ -157,6 +163,16 @@ const dollarSign = range => {
   }
 };
 
+const labels = {
+  1: 'Eek! Methinks not.',
+  2: "Meh. I've experienced better.",
+  3: 'A-OK.',
+  4: "Yay! I'm a fan.",
+  5: 'Woohoo! As good as it gets!',
+};
+
+const reviewPlaceholder = "Doesn’t look like much when you walk past, but I was practically dying of hunger so I popped in. The definition of a hole-in-the-wall. I got the regular hamburger and wow…  there are no words. A classic burger done right. Crisp bun, juicy patty, stuffed with all the essentials (ketchup, shredded lettuce, tomato, and pickles). There’s about a million options available between the menu board and wall full of specials, so it can get a little overwhelming, but you really can’t go wrong. Not much else to say besides go see for yourself! You won’t be disappointed.";
+
 // default 315 width 150 height
 
 const AnyReactComponent = ({text}: any) => <img src={text} />;
@@ -172,6 +188,18 @@ export default function BizDetail(props) {
   const [totalPages, setTotalPages] = useState(1);
   const [reviews, setReviews] = useState([]);
 
+  const [rating, setRating] = useState(null);
+  const [hover, setHover] = useState(-1);
+
+  const [reviewBody, setReviewBody] = useState("");
+
+  // const currentUserReview = props.currentUser.reviewed_bizIds.includes(
+  //   props.match.params.bizId
+  // ) ? : null;
+
+  const handleChangeReviewBody = e => {
+    setReviewBody(e.currentTarget.value);
+  };
 
   const createMapOptions = maps => ({
     disableDefaultUI: true,
@@ -191,6 +219,22 @@ export default function BizDetail(props) {
   const handlePageChange = (event, value) => {
     setPage(value);
     fetchReviews(value);
+  };
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    console.log("clicked submit");
+    let reviewData = {
+      stars: rating,
+      text: reviewBody
+    };
+    postReviewByBizId(props.match.params.bizId, reviewData)
+      .then(review => {
+        setReviewBody("");
+        setRating(null);
+        props.fetchCurrentUser();
+        fetchReviews(1);
+      });
   };
 
   useEffect(() => {
@@ -403,6 +447,102 @@ export default function BizDetail(props) {
         <Typography variant="h6" style={{ fontWeight: 700 }}>
           Reviews
         </Typography>
+
+        {props.loggedIn ? (
+          <div key="write-review">
+            <Grid container justify="center" spacing={0}>
+              <Grid item xs={2}>
+                <Card elevation={0}>
+                  <CardContent style={{ background: "#f5f5f5" }}>
+                    <Box
+                      fontWeight="fontWeightBold"
+                      style={{ marginTop: 5, marginBottom: 5 }}
+                    >
+                      {props.currentUser.name}
+                    </Box>
+                    <Typography
+                      variant="caption"
+                      className={classes.ratingRoot}
+                    >
+                      <StarsIcon style={{ fontSize: 16 }} />
+                      <Box ml={1}>
+                        {`${props.currentUser.review_count}`} reviews
+                      </Box>
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      className={classes.ratingRoot}
+                    >
+                      <PeopleIcon style={{ fontSize: 16 }} />
+                      <Box ml={1}>
+                        {`${props.currentUser.friends.split(", ").length}`}{" "}
+                        friends
+                      </Box>
+                    </Typography>
+                  </CardContent>
+                </Card>
+                {/* <Paper className={classes.paper} elevation={0}>
+              
+            </Paper> */}
+              </Grid>
+
+              <Grid item xs={10}>
+                <Card elevation={0} style={{ background: "#f5f5f5" }}>
+                  <CardContent>
+                    <div className={classes.reviewRoot}>
+                      <Rating
+                        name="select-rating"
+                        value={rating}
+                        style={{ marginBottom: 3 }}
+                        onChange={(e, v) => {
+                          setRating(v);
+                        }}
+                        onChangeActive={(e, v) => {
+                          setHover(v);
+                        }}
+                      />
+                      {rating !== null && (
+                        <Box ml={2}>
+                          {labels[hover !== -1 ? hover : rating]}
+                        </Box>
+                      )}
+                    </div>
+
+                    <form
+                      onSubmit={handleSubmit}
+                      className={classes.reviewBodyRoot}
+                    >
+                      <TextField
+                        style={{ marginBottom: 10 }}
+                        id="outlined-multiline-static"
+                        // label="Multiline"
+                        multiline
+                        rows="6"
+                        value={reviewBody}
+                        onChange={handleChangeReviewBody}
+                        placeholder={reviewPlaceholder}
+                        variant="outlined"
+                      />
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        type="submit"
+                      >
+                        Post Review
+                      </Button>
+                    </form>
+
+                  </CardContent>
+                  
+                </Card>
+              </Grid>
+            </Grid>
+
+            <Divider />
+          </div>
+        ) : (
+          ""
+        )}
 
         {reviews.map(review => (
           <div key={review._id}>
