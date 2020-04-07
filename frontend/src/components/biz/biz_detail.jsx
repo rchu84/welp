@@ -20,10 +20,6 @@ import { getReviewsByBizId, postReviewByBizId } from '../../util/biz_api_util';
 
 import NavBarContainer from '../navbar/navbar_container';
 
-
-
-// const googleMapsApiKey = "AIzaSyBQiDIYfCisQCE9F0hOymDC_zFbXMUUtGc";
-
 // https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png
 
 // https://s3-media0.fl.yelpcdn.com/assets/public/stars.yelp_design_web.yji-9bec2045845c24d3bff3ddb582884eda.png
