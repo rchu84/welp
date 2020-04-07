@@ -1,4 +1,4 @@
-/config/keys*
+/config/keys_dev.js
 .idea/
 node_modules
 .DS_Store
