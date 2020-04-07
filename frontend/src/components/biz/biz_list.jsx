@@ -263,7 +263,7 @@ export default function BizList(props) {
                     key={option}
                     // disabled={index === 0}
                     selected={index === selectedIndexSort}
-                    onClick={event => handleMenuItemClickSort(event, index)}
+                    onClick={(event) => handleMenuItemClickSort(event, index)}
                   >
                     {index === selectedIndexSort ? (
                       <RadioButtonCheckedOutlinedIcon />
@@ -287,12 +287,12 @@ export default function BizList(props) {
                 >
                   <ListItemText
                     primary={
-                      selectedIndices.some(index => index)
+                      selectedIndices.some((index) => index)
                         ? selectedIndices
                             .map((el, i) =>
                               el ? dollarSign((i + 1).toString()) : el
                             )
-                            .filter(el => el)
+                            .filter((el) => el)
                             .reduce((prev, curr) => [prev, ", ", curr])
                         : "Price"
                     }
@@ -314,7 +314,7 @@ export default function BizList(props) {
                     key={priceRange}
                     // disabled={index === 0}
                     selected={selectedIndices[index]}
-                    onClick={event => handleMenuItemClick(event, index)}
+                    onClick={(event) => handleMenuItemClick(event, index)}
                   >
                     {selectedIndices[index] ? (
                       <CheckBoxOutlinedIcon />
@@ -368,17 +368,17 @@ export default function BizList(props) {
                               indicators={false}
                               // animation="slide"
                             >
-                              {biz.photos.map(photo => (
+                              {biz.photos.map((photo) => (
                                 <CardMedia
                                   key={photo._id}
                                   style={{
                                     width: 150,
                                     height: 150,
                                     borderRadius: 5,
-                                    marginRight: 16
+                                    marginRight: 16,
                                   }}
                                   image={
-                                    process.env.PUBLIC_URL +
+                                    process.env.REACT_APP_GCS_URL +
                                     `/photos/${photo._id}.jpg`
                                   }
                                 />
@@ -390,7 +390,7 @@ export default function BizList(props) {
                                 width: 150,
                                 height: 150,
                                 borderRadius: 5,
-                                marginRight: 16
+                                marginRight: 16,
                               }}
                             />
                           )}
@@ -445,7 +445,7 @@ export default function BizList(props) {
                                 <Typography variant="subtitle2" gutterBottom>
                                   {biz.categories
                                     .slice(0, 2)
-                                    .map(category => (
+                                    .map((category) => (
                                       // <Link
                                       //   key={category}
                                       //   href={`/#/c/${biz.city.toLowerCase()}/${category.toLowerCase()}`}
@@ -504,16 +504,28 @@ export default function BizList(props) {
             height: "95vh",
             width: "315px",
             position: "sticky",
-            top: 0
+            top: 0,
           }}
         >
           <GoogleMapReact
             bootstrapURLKeys={{ key: googleMapsApiKey }}
             defaultCenter={{
-              lat: 33.4942, //props.biz.latitude,
-              lng: -111.9261 //props.biz.longitude
+              lat:
+                bizList.length > 0
+                  ? (Math.min(...bizList.map((biz) => biz.latitude)) +
+                      Math.max(...bizList.map((biz) => biz.latitude))) /
+                    2.0
+                  : 33.4942,
+              lng:
+                bizList.length > 0
+                  ? (Math.min(...bizList.map((biz) => biz.longitude)) +
+                      Math.max(...bizList.map((biz) => biz.longitude))) /
+                    2.0
+                  : -111.9261,
+              // lat: 33.4942, //props.biz.latitude,
+              // lng: -111.9261 //props.biz.longitude
             }}
-            defaultZoom={13}
+            defaultZoom={11}
             // yesIWantToUseGoogleMapApiInternals
             // onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
             // options={createMapOptions}
