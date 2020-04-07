@@ -7,14 +7,14 @@ import User from '../../models/User';
 import mongoose from 'mongoose';
 import passport from 'passport';
 
-const router = express.Router();
+const businesses = express.Router();
 
 // console.log(Business.find({city: "Dublin"}));
 // console.log(Business.find(null, (err, businesses) => console.log(businesses)));
 
-router.get("/test", (req, res) => res.json({ msg: "This is the businesses route" }));
+businesses.get("/test", (req, res) => res.json({ msg: "This is the businesses route" }));
 
-router.get("/cities", (req, res) => {
+businesses.get("/cities", (req, res) => {
   // Business.distinct("city")
   Business.aggregate([
       { $group: { _id: { city: '$city', state: '$state' }}},
@@ -26,7 +26,7 @@ router.get("/cities", (req, res) => {
     );
 });
 
-router.get("/categories", (req, res) => {
+businesses.get("/categories", (req, res) => {
   Business.distinct("categories")
     .then(categories => res.json(categories))
     .catch(err =>
@@ -34,7 +34,7 @@ router.get("/categories", (req, res) => {
     );
 });
 
-router.get("/city", (req, res) => {
+businesses.get("/city", (req, res) => {
     // .populate("photos")
     // .populate({
     //   path: "reviews",
@@ -92,7 +92,7 @@ router.get("/city", (req, res) => {
     );
 });
 
-// router.get("/:id", (req, res) => {
+// businesses.get("/:id", (req, res) => {
 //   Promise.all([
 //     Photo.find({ business_id: req.params.id }),
 //     Review.find({ business_id: req.params.id }).sort({date: -1}).populate('user_id'),
@@ -104,7 +104,7 @@ router.get("/city", (req, res) => {
 // });
 
 
-router.get("/:id", (req, res) => {
+businesses.get("/:id", (req, res) => {
   
   Business.findOne({ _id: req.params.id })
     .populate('photos')
@@ -123,7 +123,7 @@ router.get("/:id", (req, res) => {
     );
 });
 
-router.get("/:id/reviews", (req, res) => {
+businesses.get("/:id/reviews", (req, res) => {
   let query = {
     business_id: req.params.id
   };
@@ -149,7 +149,7 @@ router.get("/:id/reviews", (req, res) => {
     );
 });
 
-router.post(
+businesses.post(
   "/:id/reviews",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
@@ -214,9 +214,9 @@ router.post(
   }
 );
 
-module.exports = router;
+// module.exports = businesses;
 
-router.get("/:id/tips", (req, res) => {
+businesses.get("/:id/tips", (req, res) => {
   let query = {
     business_id: req.params.id
   };
@@ -241,4 +241,5 @@ router.get("/:id/tips", (req, res) => {
 });
 
 
-module.exports = router;
+// module.exports = businesses;
+export default businesses;

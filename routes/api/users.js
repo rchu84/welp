@@ -8,9 +8,9 @@ import keys from '../../config/keys';
 import passport from 'passport';
 import mongoose from "mongoose";
 
-const router = express.Router();
+const users = express.Router();
 
-router.post("/register", (req, res) => {
+users.post("/register", (req, res) => {
   const { errors, isValid } = validateRegisterInput(req.body);
 
   if (!isValid) {
@@ -67,7 +67,7 @@ router.post("/register", (req, res) => {
 });
 
 
-router.post("/login", (req, res) => {
+users.post("/login", (req, res) => {
   const { errors, isValid } = validateLoginInput(req.body);
 
   if (!isValid) {
@@ -119,7 +119,7 @@ router.post("/login", (req, res) => {
     });
 });
 
-router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
+users.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
   // console.log(req);
   // console.log(res);
   // res.json({
@@ -147,4 +147,5 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
 
 });
 
-module.exports = router;
+// module.exports = users;
+export default users;
