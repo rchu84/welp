@@ -1,6 +1,6 @@
 import express from "express";
-import validateRegisterInput from '../../validation/register';
-import validateLoginInput from '../../validation/login';
+import { validateRegisterInput } from '../../validation/register';
+import { validateLoginInput } from '../../validation/login';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../../models/User';

@@ -1,5 +1,5 @@
 import validator from 'validator';
-import validText from './valid-text';
+import { validText } from './valid-text';
 
 module.exports = function validateRegisterInput(data) {
   let errors = {};
