@@ -4,6 +4,9 @@
   "description": "inspired by Yelp",
   "main": "app.js",
   "type": "module",
+  "engines": {
+    "node": "<=12.10"
+  },
   "scripts": {
     "start": "node app.js",
     "server": "nodemon app.js",
