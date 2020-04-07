@@ -64,4 +64,5 @@ BusinessSchema.plugin(AutoIncrement, {
 });
 
 const Business = mongoose.model('Business', BusinessSchema, "business");
-module.exports = Business;
+// module.exports = Business;
+export default Business;

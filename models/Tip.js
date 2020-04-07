@@ -27,4 +27,5 @@ const TipSchema = new Schema({
 TipSchema.plugin(mongoosePaginate);
 
 const Tip = mongoose.model("Tip", TipSchema, "tip");
-module.exports = Tip;
+// module.exports = Tip;
+export default Tip;

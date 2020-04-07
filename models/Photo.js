@@ -18,4 +18,5 @@ const PhotoSchema = new Schema({
 });
 
 const Photo = mongoose.model("Photo", PhotoSchema, "photo");
-module.exports = Photo;
+// module.exports = Photo;
+export default Photo;

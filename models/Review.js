@@ -47,4 +47,5 @@ const ReviewSchema = new Schema({
 ReviewSchema.plugin(mongoosePaginate);
 
 const Review = mongoose.model("Review", ReviewSchema, "review");
-module.exports = Review;
+// module.exports = Review;
+export default Review;
