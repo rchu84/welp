@@ -243,7 +243,6 @@ export default function BizDetail(props) {
 
   const handleSubmit = e => {
     e.preventDefault();
-    console.log("clicked submit");
     let reviewData = {
       stars: rating,
       text: reviewBody
@@ -496,9 +495,15 @@ export default function BizDetail(props) {
         {props.loggedIn ? (
           <div key="write-review">
             <Grid container justify="center" spacing={0}>
-              <Grid item xs={2}>
+              <Grid item xs={12} md={2}>
                 <Card elevation={0}>
-                  <CardContent style={{ background: "#f5f5f5" }}>
+                  <CardContent
+                    style={{
+                      background: "#f5f5f5",
+                      paddingTop: matches ? 16 : 8,
+                      paddingBottom: matches ? 24 : 8,
+                    }}
+                  >
                     <Box
                       fontWeight="fontWeightBold"
                       style={{ marginTop: 5, marginBottom: 5 }}
@@ -531,9 +536,14 @@ export default function BizDetail(props) {
             </Paper> */}
               </Grid>
 
-              <Grid item xs={10}>
+              <Grid item xs={12} md={10}>
                 <Card elevation={0} style={{ background: "#f5f5f5" }}>
-                  <CardContent>
+                  <CardContent
+                    style={{
+                      paddingTop: matches ? 16 : 0,
+                      paddingBottom: matches ? 16 : 8,
+                    }}
+                  >
                     <div className={classes.reviewRoot}>
                       <Rating
                         name="select-rating"
