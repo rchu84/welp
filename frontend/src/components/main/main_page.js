@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles, useTheme } from "@material-ui/core/styles";
 import { Link as RouterLink } from "react-router-dom";
 import SearchBar from '../search/search_bar';
 import axios from "axios";
 
 import { 
-  Grid, Paper, Link, TextField, CircularProgress, Button
+  Grid, Paper, Link, TextField, CircularProgress, Button, useMediaQuery
  } from "@material-ui/core";
 
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -42,25 +42,28 @@ const fixedEncodeURIComponent = str => {
   });
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     maxWidth: 960,
     margin: "auto",
     marginTop: 20,
-    marginBottom: 20
+    marginBottom: 20,
   },
 
   categoriesRoot: {
-    flexGrow: 1
+    flexGrow: 1,
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: 8,
+      marginRight: 8
+    },
   },
 
   paper: {
     padding: theme.spacing(2),
-    textAlign: 'center',
+    textAlign: "center",
     color: theme.palette.text.primary,
   },
-
 }));
 
 export default function Main(props) {
@@ -166,14 +169,13 @@ export default function Main(props) {
     );
   };
 
-  const handleCategoryClick = () => {
-
-  };
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("sm"));
 
   return (
     <div className={classes.root}>
-      <Typography variant="h2" align="center" gutterBottom>
-        Welp - A Yelp Clone
+      <Typography variant={matches ? "h2" : "h4"} align="center" gutterBottom>
+        Welp - Inspired by Yelp
       </Typography>
 
       {/* <div
@@ -298,7 +300,7 @@ export default function Main(props) {
 
 
       <div className={classes.categoriesRoot}>
-        <Grid container spacing={3}>
+        <Grid container spacing={matches ? 3 : 1}>
           {Object.keys(categories).map(category => (
             <Grid item xs={6} md={3} key={category}>
               <Link

@@ -436,7 +436,7 @@ export default function BizList(props) {
                                   {`${pagingCounter + idx}. ${biz.name}`}
                                 </Typography>
                               </Box>
-                              <Hidden mdDown>
+                              <Hidden smDown>
                                 <Box>
                                   <Typography variant="caption">
                                     {biz.address}

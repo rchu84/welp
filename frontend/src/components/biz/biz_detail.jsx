@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles, useTheme } from '@material-ui/core/styles';
 
 import { Rating, Pagination } from '@material-ui/lab';
 import { 
   Box, Divider, Grid, Paper, Table, TableBody, TableContainer, TableHead,
   Card, CardActionArea, CardActions, CardContent, CardMedia, Link, TextField,
-  Button, GridList, GridListTile, TableRow, TableCell as MuiTableCell
+  Button, GridList, GridListTile, TableRow, TableCell as MuiTableCell,
+  useMediaQuery
 } from '@material-ui/core';
 
 import { Link as RouterLink } from "react-router-dom";
@@ -30,11 +31,11 @@ import NavBarContainer from '../navbar/navbar_container';
 
 // https://maps.googleapis.com/maps/api/staticmap?scale=1&center=37.767634%2C-122.388865&language=en&zoom=15&markers=scale%3A1%7Cicon%3Ahttps%3A%2F%2Fyelp-images.s3.amazonaws.com%2Fassets%2Fmap-markers%2Fannotation_32x43.png%7C37.767634%2C-122.388865&client=gme-yelp&sensor=false&size=315x150&signature=83JEyZuvp5kUsD_skcWdYKUQAQ4=
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     maxWidth: 960,
-    margin: "auto"
+    margin: "auto",
   },
 
   galleryRoot: {
@@ -42,65 +43,80 @@ const useStyles = makeStyles(theme => ({
     flexWrap: "wrap",
     justifyContent: "space-around",
     overflow: "hidden",
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
   },
 
   gridList: {
-    width: "100%"
+    width: "100%",
   },
 
   locationRoot: {
-    flexGrow: 1
+    flexGrow: 1,
   },
 
   reviewRoot: {
     width: 400,
     display: "flex",
-    alignItems: "center"
+    alignItems: "center",
   },
 
   ratingRoot: {
     display: "flex",
-    alignItems: "center"
+    alignItems: "center",
+    [theme.breakpoints.down("md")]: {
+      marginLeft: 8,
+      marginRight: 8,
+    },
   },
 
   categoriesRoot: {
     display: "flex",
     alignItems: "center",
-    margin: "0 4px"
+    margin: "0 4px",
+    [theme.breakpoints.down("md")]: {
+      marginLeft: 8,
+      marginRight: 8,
+    },
   },
 
   addressCard: {
-    maxWidth: 315
+    maxWidth: 315,
+    [theme.breakpoints.down("md")]: {
+      margin: "0 auto",
+    },
   },
 
   hoursTable: {
-    maxWidth: 250
+    maxWidth: 250,
+    margin: "auto",
   },
 
   addressCardMedia: {
-    height: 150
+    height: 150,
   },
   bullet: {
     display: "inline-block",
     margin: "0 5px",
-    transform: "scale(0.8)"
+    transform: "scale(0.8)",
   },
   paper: {
     padding: theme.spacing(2),
-    margin: "auto"
+    margin: "auto",
   },
   pos: {
-    marginBottom: 12
+    marginBottom: 12,
+    [theme.breakpoints.down("sm")]: {
+      justifyContent: "space-around",
+    },
   },
   locationPos: {
-    marginBottom: 12
+    marginBottom: 12,
   },
   paginationRoot: {
     "& > *": {
-      marginTop: theme.spacing(2)
+      marginTop: theme.spacing(2),
     },
-    marginBottom: "20px"
+    marginBottom: "20px",
   },
   photosRoot: {
     display: "flex",
@@ -117,17 +133,17 @@ const useStyles = makeStyles(theme => ({
   photosGridList: {
     flexWrap: "nowrap",
     // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-    transform: "translateZ(0)"
+    transform: "translateZ(0)",
   },
   photosTitle: {
-    color: theme.palette.primary.light
+    color: theme.palette.primary.light,
   },
   photosTitleBar: {
     background:
-      "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)"
+      "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)",
   },
   reviewBodyRoot: {
-    '& .MuiTextField-root': {
+    "& .MuiTextField-root": {
       // margin: theme.spacing(1),
       width: "100%",
     },
@@ -249,9 +265,10 @@ export default function BizDetail(props) {
     fetchReviews(1);
   }, []);
 
-  if (!props.biz) return null;
+    const theme = useTheme();
+    const matches = useMediaQuery(theme.breakpoints.up("md"));
 
-  
+  if (!props.biz) return null;
 
   return (
     <React.Fragment>
@@ -271,7 +288,15 @@ export default function BizDetail(props) {
         <div className={classes.photosRoot}>
           <GridList
             className={classes.photosGridList}
-            cols={props.biz.photos.length < 4 ? props.biz.photos.length : 4.5}
+            cols={
+              matches
+                ? props.biz.photos.length < 5
+                  ? props.biz.photos.length
+                  : 4.5
+                : props.biz.photos.length < 3
+                ? props.biz.photos.length
+                : 2.5
+            }
           >
             {props.biz.photos.map((photo) => (
               <GridListTile key={photo._id}>
@@ -280,18 +305,6 @@ export default function BizDetail(props) {
                     process.env.REACT_APP_GCS_URL + `/photos/${photo._id}.jpg`
                   }
                 />
-                {/* <GridListTileBar
-                title={tile.title}
-                classes={{
-                  root: classes.photosTitleBar,
-                  title: classes.photosTitle
-                }}
-                actionIcon={
-                  <IconButton aria-label={`star ${tile.title}`}>
-                    <StarBorderIcon className={classes.photosTitle} />
-                  </IconButton>
-                }
-              /> */}
               </GridListTile>
             ))}
           </GridList>
@@ -305,7 +318,14 @@ export default function BizDetail(props) {
         ))}
       </Grid> */}
 
-        <Typography variant="h3" style={{ fontWeight: 700 }}>
+        <Typography
+          variant={matches ? "h3" : "h5"}
+          style={{
+            fontWeight: 700,
+            marginLeft: matches ? 0 : 8,
+            marginRight: matches ? 0 : 8,
+          }}
+        >
           {props.biz.name}
         </Typography>
 
@@ -361,7 +381,14 @@ export default function BizDetail(props) {
 
         <Divider />
 
-        <Typography variant="h6" style={{ fontWeight: 700 }}>
+        <Typography
+          variant="h6"
+          style={{
+            fontWeight: 700,
+            marginLeft: matches ? 0 : 8,
+            marginRight: matches ? 0 : 8,
+          }}
+        >
           Location & Hours
         </Typography>
 
@@ -372,7 +399,7 @@ export default function BizDetail(props) {
             justify="center"
             className={classes.locationPos}
           >
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <Card className={classes.addressCard} variant="outlined">
                 {/* <CardActionArea> */}
                 <CardMedia
@@ -398,7 +425,7 @@ export default function BizDetail(props) {
             </Grid>
 
             {props.biz.hours ? (
-              <Grid item xs={6}>
+              <Grid item xs={12} md={6}>
                 <TableContainer>
                   <Table
                     size="small"
@@ -455,7 +482,14 @@ export default function BizDetail(props) {
 
         <Divider />
 
-        <Typography variant="h6" style={{ fontWeight: 700 }}>
+        <Typography
+          variant="h6"
+          style={{
+            fontWeight: 700,
+            marginLeft: matches ? 0 : 8,
+            marginRight: matches ? 0 : 8,
+          }}
+        >
           Reviews
         </Typography>
 
@@ -556,9 +590,15 @@ export default function BizDetail(props) {
         {reviews.map((review) => (
           <div key={review._id}>
             <Grid container justify="center" spacing={0}>
-              <Grid item xs={2}>
+              <Grid item xs={12} md={2}>
                 <Card elevation={0}>
-                  <CardContent style={{ background: "#f5f5f5" }}>
+                  <CardContent
+                    style={{
+                      background: "#f5f5f5",
+                      paddingTop: matches ? 16 : 8,
+                      paddingBottom: matches ? 24 : 8,
+                    }}
+                  >
                     <Box
                       fontWeight="fontWeightBold"
                       style={{ marginTop: 5, marginBottom: 5 }}
@@ -585,14 +625,16 @@ export default function BizDetail(props) {
                     </Typography>
                   </CardContent>
                 </Card>
-                {/* <Paper className={classes.paper} elevation={0}>
-              
-            </Paper> */}
               </Grid>
 
-              <Grid item xs={10}>
+              <Grid item xs={12} md={10}>
                 <Card elevation={0} style={{ background: "#f5f5f5" }}>
-                  <CardContent>
+                  <CardContent
+                    style={{
+                      paddingTop: matches ? 16 : 0,
+                      paddingBottom: matches ? 16 : 8,
+                    }}
+                  >
                     <div className={classes.reviewRoot}>
                       <Rating
                         name="read-only"
@@ -601,13 +643,11 @@ export default function BizDetail(props) {
                         readOnly
                         style={{ marginBottom: 3 }}
                       />
-                      {/* <Typography variant="caption"> */}
                       <Box ml={2}>
                         <Typography variant="body2">
                           {new Date(review.date).toLocaleDateString()}
                         </Typography>
                       </Box>
-                      {/* </Typography> */}
                     </div>
 
                     <Typography variant="body2" component="p">
