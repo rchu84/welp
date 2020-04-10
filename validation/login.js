@@ -1,7 +1,8 @@
 import isEmpty from 'validator/lib/isEmpty';
 import validText from './valid-text';
 
-module.exports = function validateLoginInput(data) {
+// module.exports = function validateLoginInput(data) {
+export default function validateLoginInput(data) {
   let errors = {};
 
   // data.email = validText(data.email) ? data.email : "";

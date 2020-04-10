@@ -82,10 +82,15 @@ export default function SearchBar(props) {
     };
   }, [loadingNear, loadingNear.length]);
 
+  useEffect(() => {
+    if (c && city && state) handleSearch();
+  }, [c, city, state]);
+
   return (
     <Grid container spacing={1} style={{ marginTop: 10, marginBottom: 10 }}>
-      <Grid item xs={8}>
+      <Grid item xs={12} md={8}>
         <Autocomplete
+          size="small"
           id="search-category"
           open={openFind}
           onOpen={() => {
@@ -103,7 +108,7 @@ export default function SearchBar(props) {
             <TextField
               style={{ width: "100%" }}
               {...params}
-              label="Restaurants, Spas, Shopping..."
+              label="Restaurants, Spa..."
               variant="outlined"
               InputProps={{
                 ...params.InputProps,
@@ -120,8 +125,9 @@ export default function SearchBar(props) {
           )}
         />
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={12} md={4}>
         <Autocomplete
+          size="small"
           id="search-city-state"
           open={openNear}
           onOpen={() => {
@@ -135,7 +141,7 @@ export default function SearchBar(props) {
           options={optionsNear}
           loading={loadingNear}
           onChange={(e, v) => {
-            console.log(v);
+            // console.log(v);
             if (v) {
               let vals = v.split(", ");
               setCity(vals[0]);
@@ -164,17 +170,17 @@ export default function SearchBar(props) {
           )}
         />
       </Grid>
-      <Grid item xs={1}>
+      {/* <Grid item xs={1}>
         <Button
           variant="contained"
           color="secondary"
           onClick={handleSearch}
-          style={{ height: 56 }}
+          style={{ height: 40 }}
           disabled={!(c && city && state)}
         >
           Find
         </Button>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 }

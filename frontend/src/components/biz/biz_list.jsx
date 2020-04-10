@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles, useTheme } from "@material-ui/core/styles";
 import { Link as RouterLink } from "react-router-dom";
 import NavBarContainer from '../navbar/navbar_container';
 
 import queryString from "query-string";
 import {
   Grid, Card, CardContent, Box, Link, CardActionArea, CardMedia,
-  List, ListItem, ListItemText, Menu, MenuItem, Button
+  List, ListItem, ListItemText, Menu, MenuItem, Button, Hidden, useMediaQuery
 } from '@material-ui/core';
 import {
   Rating, Pagination
@@ -24,51 +24,63 @@ import RadioButtonCheckedOutlinedIcon from "@material-ui/icons/RadioButtonChecke
 import RadioButtonUncheckedOutlinedIcon from "@material-ui/icons/RadioButtonUncheckedOutlined";
 
 import GoogleMapReact from "google-map-react";
+import { fitBounds } from 'google-map-react/utils';
 
 const googleMapsApiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     width: "100%",
     // maxWidth: 960,
     // height: "100vh",
-    margin: "auto"
+    margin: "auto",
+  },
+
+  img: {
+    width: 60,
+    height: 60,
+    [theme.breakpoints.up('md')]: {
+      width: 150,
+      height: 150
+    },
+    borderRadius: 5,
+    marginRight: 16,
   },
 
   bullet: {
     display: "inline-block",
     margin: "0 5px",
-    transform: "scale(0.8)"
+    transform: "scale(0.8)",
   },
   reviewRoot: {
     width: 200,
     display: "flex",
-    alignItems: "center"
+    alignItems: "center",
   },
 
   bizListRoot: {
     flexGrow: 1,
-    margin: "0 40px",
-    overflow: "auto"
+    margin: "0 20px",
+    overflow: "auto",
   },
 
   ratingRoot: {
     display: "flex",
-    alignItems: "center"
+    alignItems: "center",
   },
 
   categoriesRoot: {
     display: "flex",
     alignItems: "center",
-    margin: "0 4px"
+    margin: "0 4px",
   },
 
   paginationRoot: {
     "& > *": {
-      marginTop: theme.spacing(2)
+      marginTop: theme.spacing(2),
     },
-    marginBottom: "20px"
+    marginBottom: "20px",
   },
 
   priceRangeMenuRoot: {
@@ -81,7 +93,7 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
     maxWidth: 200,
     // backgroundColor: theme.palette.background.paper
-  }
+  },
 }));
 
 const dollarSign = range => {
@@ -158,6 +170,8 @@ export default function BizList(props) {
   const [map, setMap] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
   const [bizList, setBizList] = useState([]);
+  const [zoom, setZoom] = useState(11);
+  const [center, setCenter] = useState({ lat: 33.4942, lng: -111.9261 });
   const [hover, setHover] = useState(null);
 
   const fetchNewList = page => {
@@ -176,6 +190,17 @@ export default function BizList(props) {
         setPagingCounter(results.results.data.pagingCounter);
         setTotalPages(results.results.data.totalPages);
         setBizList(results.results.data.docs);
+
+        setCenter({
+          lat:
+            (Math.min(...results.results.data.docs.map((biz) => biz.latitude)) +
+              Math.max(...results.results.data.docs.map((biz) => biz.latitude))) /
+            2.0,
+          lng:
+            (Math.min(...results.results.data.docs.map((biz) => biz.longitude)) +
+              Math.max(...results.results.data.docs.map((biz) => biz.longitude))) /
+            2.0,
+        });
       })
       .catch(err => console.log(err));
   };
@@ -209,6 +234,9 @@ export default function BizList(props) {
 
   // if (bizList.length === 0) return null;
 
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("md"));
+
   return (
     <React.Fragment>
       <NavBarContainer city={city} state={state} />
@@ -216,7 +244,7 @@ export default function BizList(props) {
       <div className={classes.root}>
         <div className={classes.bizListRoot}>
           <Typography
-            variant="h4"
+            variant={matches ? "h4" : "h6"}
             style={{ marginTop: 20, fontWeight: 700 }}
             gutterBottom
           >
@@ -227,7 +255,7 @@ export default function BizList(props) {
           <Box display="flex" flexDirection="row" alignItems="center">
             <div>
               <Typography
-                variant="h6"
+                variant={matches ? "h6" : "subtitle2"}
                 style={{ fontWeight: 700, marginRight: 10 }}
               >
                 Filters:
@@ -263,7 +291,7 @@ export default function BizList(props) {
                     key={option}
                     // disabled={index === 0}
                     selected={index === selectedIndexSort}
-                    onClick={event => handleMenuItemClickSort(event, index)}
+                    onClick={(event) => handleMenuItemClickSort(event, index)}
                   >
                     {index === selectedIndexSort ? (
                       <RadioButtonCheckedOutlinedIcon />
@@ -287,12 +315,12 @@ export default function BizList(props) {
                 >
                   <ListItemText
                     primary={
-                      selectedIndices.some(index => index)
+                      selectedIndices.some((index) => index)
                         ? selectedIndices
                             .map((el, i) =>
                               el ? dollarSign((i + 1).toString()) : el
                             )
-                            .filter(el => el)
+                            .filter((el) => el)
                             .reduce((prev, curr) => [prev, ", ", curr])
                         : "Price"
                     }
@@ -314,7 +342,7 @@ export default function BizList(props) {
                     key={priceRange}
                     // disabled={index === 0}
                     selected={selectedIndices[index]}
-                    onClick={event => handleMenuItemClick(event, index)}
+                    onClick={(event) => handleMenuItemClick(event, index)}
                   >
                     {selectedIndices[index] ? (
                       <CheckBoxOutlinedIcon />
@@ -368,17 +396,18 @@ export default function BizList(props) {
                               indicators={false}
                               // animation="slide"
                             >
-                              {biz.photos.map(photo => (
+                              {biz.photos.map((photo) => (
                                 <CardMedia
+                                  className={classes.img}
                                   key={photo._id}
-                                  style={{
-                                    width: 150,
-                                    height: 150,
-                                    borderRadius: 5,
-                                    marginRight: 16
-                                  }}
+                                  // style={{
+                                  //   width: 150,
+                                  //   height: 150,
+                                  //   borderRadius: 5,
+                                  //   marginRight: 16,
+                                  // }}
                                   image={
-                                    process.env.PUBLIC_URL +
+                                    process.env.REACT_APP_GCS_URL +
                                     `/photos/${photo._id}.jpg`
                                   }
                                 />
@@ -386,12 +415,13 @@ export default function BizList(props) {
                             </Carousel>
                           ) : (
                             <BusinessOutlinedIcon
-                              style={{
-                                width: 150,
-                                height: 150,
-                                borderRadius: 5,
-                                marginRight: 16
-                              }}
+                              className={classes.img}
+                              // style={{
+                              //   width: 150,
+                              //   height: 150,
+                              //   borderRadius: 5,
+                              //   marginRight: 16,
+                              // }}
                             />
                           )}
                         </Box>
@@ -400,17 +430,19 @@ export default function BizList(props) {
                             <Box display="flex">
                               <Box flexGrow={1}>
                                 <Typography
-                                  variant="h5"
+                                  variant={matches ? "h5" : "subtitle1"}
                                   style={{ fontWeight: 700 }}
                                 >
                                   {`${pagingCounter + idx}. ${biz.name}`}
                                 </Typography>
                               </Box>
-                              <Box>
-                                <Typography variant="caption">
-                                  {biz.address}
-                                </Typography>
-                              </Box>
+                              <Hidden mdDown>
+                                <Box>
+                                  <Typography variant="caption">
+                                    {biz.address}
+                                  </Typography>
+                                </Box>
+                              </Hidden>
                             </Box>
 
                             <Box borderColor="transparent">
@@ -422,7 +454,10 @@ export default function BizList(props) {
                                   readOnly
                                 />
                                 <Box ml={2}>
-                                  <Typography component="legend">
+                                  <Typography
+                                    component="legend"
+                                    variant={matches ? "body1" : "caption"}
+                                  >
                                     {biz.review_count} reviews
                                   </Typography>
                                 </Box>
@@ -445,7 +480,7 @@ export default function BizList(props) {
                                 <Typography variant="subtitle2" gutterBottom>
                                   {biz.categories
                                     .slice(0, 2)
-                                    .map(category => (
+                                    .map((category) => (
                                       // <Link
                                       //   key={category}
                                       //   href={`/#/c/${biz.city.toLowerCase()}/${category.toLowerCase()}`}
@@ -476,6 +511,14 @@ export default function BizList(props) {
                                 </Typography>
                               </div>
                             </Box>
+
+                            <Hidden mdUp>
+                              <Box>
+                                <Typography variant="caption">
+                                  {biz.address}
+                                </Typography>
+                              </Box>
+                            </Hidden>
                           </Box>
                         </CardActionArea>
                       </Box>
@@ -494,56 +537,59 @@ export default function BizList(props) {
                 count={totalPages}
                 page={page}
                 onChange={handlePageChange}
+                siblingCount={matches ? 1 : 0}
               />
             </div>
           )}
         </div>
 
-        <div
-          style={{
-            height: "95vh",
-            width: "315px",
-            position: "sticky",
-            top: 0
-          }}
-        >
-          <GoogleMapReact
-            bootstrapURLKeys={{ key: googleMapsApiKey }}
-            defaultCenter={{
-              lat: 33.4942, //props.biz.latitude,
-              lng: -111.9261 //props.biz.longitude
+        <Hidden only={["xs", "sm"]}>
+          <div
+            only="mdUp"
+            style={{
+              height: "95vh",
+              width: "315px",
+              position: "sticky",
+              top: 0,
+              // display: "none",
             }}
-            defaultZoom={13}
-            // yesIWantToUseGoogleMapApiInternals
-            // onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
-            // options={createMapOptions}
-            onChange={handleMapChange}
           >
-            {bizList.map((biz, idx) =>
-              // <AnyReactComponent
-              //   key={biz._id}
-              //   lat={biz.latitude}
-              //   lng={biz.longitude}
-              //   text="https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png"
-              // />
-              hover === idx ? (
-                <RoomOutlinedIcon
-                  key={biz._id}
-                  lat={biz.latitude}
-                  lng={biz.longitude}
-                  fontSize="large"
-                />
-              ) : (
-                <RoomRoundedIcon
-                  key={biz._id}
-                  lat={biz.latitude}
-                  lng={biz.longitude}
-                  fontSize="large"
-                />
-              )
-            )}
-          </GoogleMapReact>
-        </div>
+            <GoogleMapReact
+              bootstrapURLKeys={{ key: googleMapsApiKey }}
+              defaultCenter={{ lat: 33.4942, lng: -111.9261 }}
+              defaultZoom={11}
+              center={center}
+              // yesIWantToUseGoogleMapApiInternals
+              // onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
+              // options={createMapOptions}
+              // onChange={handleMapChange}
+            >
+              {bizList.map((biz, idx) =>
+                // <AnyReactComponent
+                //   key={biz._id}
+                //   lat={biz.latitude}
+                //   lng={biz.longitude}
+                //   text="https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png"
+                // />
+                hover === idx ? (
+                  <RoomOutlinedIcon
+                    key={biz._id}
+                    lat={biz.latitude}
+                    lng={biz.longitude}
+                    fontSize="large"
+                  />
+                ) : (
+                  <RoomRoundedIcon
+                    key={biz._id}
+                    lat={biz.latitude}
+                    lng={biz.longitude}
+                    fontSize="large"
+                  />
+                )
+              )}
+            </GoogleMapReact>
+          </div>
+        </Hidden>
       </div>
     </React.Fragment>
   );

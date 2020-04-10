@@ -200,9 +200,9 @@ export default function Main(props) {
       </div> */}
 
       <Grid container spacing={1} style={{ marginBottom: 20 }}>
-        <Grid item xs={8}>
+        <Grid item xs={12} md={8}>
           <Autocomplete
-            id="asynchronous-demo"
+            id="search-category"
             open={openFind}
             onOpen={() => {
               setOpenFind(true);
@@ -236,9 +236,9 @@ export default function Main(props) {
             )}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} md={3}>
           <Autocomplete
-            id="asynchronous-demo"
+            id="search-city-state"
             open={openNear}
             onOpen={() => {
               setOpenNear(true);
@@ -280,12 +280,13 @@ export default function Main(props) {
             )}
           />
         </Grid>
-        <Grid item xs={1}>
+        <Grid item xs={12} md={1}>
           <Button 
             variant="contained" 
             color="secondary"
             onClick={handleSearch}
             style={{height: 56}}
+            fullWidth
             disabled={!(c && city && state)}
           >
             Find
@@ -299,7 +300,7 @@ export default function Main(props) {
       <div className={classes.categoriesRoot}>
         <Grid container spacing={3}>
           {Object.keys(categories).map(category => (
-            <Grid item xs={3} key={category}>
+            <Grid item xs={6} md={3} key={category}>
               <Link
                 underline="none"
                 component={RouterLink}

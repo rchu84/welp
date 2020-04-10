@@ -20,6 +20,10 @@ import { getReviewsByBizId, postReviewByBizId } from '../../util/biz_api_util';
 
 import NavBarContainer from '../navbar/navbar_container';
 
+
+
+// const googleMapsApiKey = "AIzaSyBQiDIYfCisQCE9F0hOymDC_zFbXMUUtGc";
+
 // https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png
 
 // https://s3-media0.fl.yelpcdn.com/assets/public/stars.yelp_design_web.yji-9bec2045845c24d3bff3ddb582884eda.png
@@ -269,10 +273,12 @@ export default function BizDetail(props) {
             className={classes.photosGridList}
             cols={props.biz.photos.length < 4 ? props.biz.photos.length : 4.5}
           >
-            {props.biz.photos.map(photo => (
+            {props.biz.photos.map((photo) => (
               <GridListTile key={photo._id}>
                 <img
-                  src={process.env.PUBLIC_URL + `/photos/${photo._id}.jpg`}
+                  src={
+                    process.env.REACT_APP_GCS_URL + `/photos/${photo._id}.jpg`
+                  }
                 />
                 {/* <GridListTileBar
                 title={tile.title}
@@ -333,7 +339,7 @@ export default function BizDetail(props) {
 
             <Typography variant="subtitle2" gutterBottom>
               {props.biz.categories
-                .map(category => (
+                .map((category) => (
                   <Link
                     key={category}
                     underline="none"
@@ -371,7 +377,12 @@ export default function BizDetail(props) {
                 {/* <CardActionArea> */}
                 <CardMedia
                   className={classes.addressCardMedia}
-                  image={process.env.PUBLIC_URL + "/staticmap.png"}
+                  // image={process.env.PUBLIC_URL + "/staticmap.png"}
+                  image={googleMapsStaticURL(
+                    props.biz.latitude,
+                    props.biz.longitude,
+                    process.env.REACT_APP_GOOGLE_MAPS_API_KEY
+                  )}
                   title="Contemplative Reptile"
                 />
                 <CardContent>
@@ -395,7 +406,7 @@ export default function BizDetail(props) {
                     className={classes.hoursTable}
                   >
                     <TableBody>
-                      {Object.keys(props.biz.hours).map(key => (
+                      {Object.keys(props.biz.hours).map((key) => (
                         <TableRow key={key}>
                           <TableCell component="th" scope="row">
                             <Box fontWeight="fontWeightBold">
@@ -409,7 +420,7 @@ export default function BizDetail(props) {
                               ? "24 hours"
                               : props.biz.hours[key]
                                   .split("-")
-                                  .map(time =>
+                                  .map((time) =>
                                     new Date(
                                       null,
                                       null,
@@ -417,7 +428,7 @@ export default function BizDetail(props) {
                                       ...time.split(":")
                                     ).toLocaleTimeString(navigator.language, {
                                       hour: "2-digit",
-                                      minute: "2-digit"
+                                      minute: "2-digit",
                                     })
                                   )
                                   .reduce((prev, curr) => [prev, " - ", curr])}
@@ -531,9 +542,7 @@ export default function BizDetail(props) {
                         Post Review
                       </Button>
                     </form>
-
                   </CardContent>
-                  
                 </Card>
               </Grid>
             </Grid>
@@ -544,7 +553,7 @@ export default function BizDetail(props) {
           ""
         )}
 
-        {reviews.map(review => (
+        {reviews.map((review) => (
           <div key={review._id}>
             <Grid container justify="center" spacing={0}>
               <Grid item xs={2}>
