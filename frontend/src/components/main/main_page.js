@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
     margin: "auto",
     marginTop: 20,
     marginBottom: 20,
+    overflowX: "hidden",
   },
 
   categoriesRoot: {

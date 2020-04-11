@@ -38,6 +38,10 @@ const useStyles = makeStyles((theme) => ({
     margin: "auto",
   },
 
+  detailRoot: {
+    overflowX: "hidden",
+  },
+
   galleryRoot: {
     display: "flex",
     flexWrap: "wrap",
@@ -309,14 +313,7 @@ export default function BizDetail(props) {
           </GridList>
         </div>
 
-        {/* <Grid container spacing={2}>
-        {props.biz.photos.map(photo => (
-          <Grid item xs={3} key={photo._id}>
-            <img src={process.env.PUBLIC_URL + `/photos/${photo._id}.jpg`} />
-          </Grid>
-        ))}
-      </Grid> */}
-
+        <div className={classes.detailRoot}>
         <Typography
           variant={matches ? "h3" : "h5"}
           style={{
@@ -471,14 +468,6 @@ export default function BizDetail(props) {
           </Grid>
         </div>
 
-        {/* <img
-        src={googleMapsStaticURL(
-          props.biz.latitude,
-          props.biz.longitude,
-          googleMapsApiKey
-        )}
-      /> */}
-
         <Divider />
 
         <Typography
@@ -531,9 +520,6 @@ export default function BizDetail(props) {
                     </Typography>
                   </CardContent>
                 </Card>
-                {/* <Paper className={classes.paper} elevation={0}>
-              
-            </Paper> */}
               </Grid>
 
               <Grid item xs={12} md={10}>
@@ -703,23 +689,7 @@ export default function BizDetail(props) {
           />
         </div>
 
-        {/* <div style={{ height: "315px", width: "315px" }}>
-        <GoogleMapReact
-          bootstrapURLKeys={{ key: googleMapsApiKey }}
-          defaultCenter={{
-            lat: props.biz.latitude,
-            lng: props.biz.longitude
-          }}
-          defaultZoom={zoom}
-          options={createMapOptions}
-        >
-          <AnyReactComponent
-            lat={props.biz.latitude}
-            lng={props.biz.longitude}
-            text="https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png"
-          />
-        </GoogleMapReact>
-      </div> */}
+      </div>
       </div>
     </React.Fragment>
   );

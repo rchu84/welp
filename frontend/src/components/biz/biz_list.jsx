@@ -63,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     margin: "0 20px",
     overflow: "auto",
+    overflowX: "hidden"
   },
 
   ratingRoot: {
