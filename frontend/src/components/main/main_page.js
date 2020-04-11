@@ -52,11 +52,19 @@ const useStyles = makeStyles((theme) => ({
     overflowX: "hidden",
   },
 
-  categoriesRoot: {
-    flexGrow: 1,
+  searchRoot: {
     [theme.breakpoints.down("sm")]: {
       marginLeft: 8,
-      marginRight: 8
+      marginRight: 8,
+    },
+  },
+
+  categoriesRoot: {
+    flexGrow: 1,
+    marginBottom: 20,
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: 8,
+      marginRight: 8,
     },
   },
 
@@ -203,7 +211,7 @@ export default function Main(props) {
       </div> */}
 
       <Grid container spacing={1} style={{ marginBottom: 20 }}>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={8} className={classes.searchRoot}>
           <Autocomplete
             id="search-category"
             open={openFind}
@@ -214,11 +222,11 @@ export default function Main(props) {
               setOpenFind(false);
             }}
             getOptionSelected={(option, value) => option === value}
-            getOptionLabel={option => option}
+            getOptionLabel={(option) => option}
             options={optionsFind}
             onChange={(e, v) => setC(v)}
             loading={loadingFind}
-            renderInput={params => (
+            renderInput={(params) => (
               <TextField
                 style={{ width: "100%" }}
                 {...params}
@@ -233,13 +241,13 @@ export default function Main(props) {
                       ) : null}
                       {params.InputProps.endAdornment}
                     </React.Fragment>
-                  )
+                  ),
                 }}
               />
             )}
           />
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} md={3} className={classes.searchRoot}>
           <Autocomplete
             id="search-city-state"
             open={openNear}
@@ -250,7 +258,7 @@ export default function Main(props) {
               setOpenNear(false);
             }}
             getOptionSelected={(option, value) => option === value}
-            getOptionLabel={option => option}
+            getOptionLabel={(option) => option}
             options={optionsNear}
             loading={loadingNear}
             onChange={(e, v) => {
@@ -262,7 +270,7 @@ export default function Main(props) {
               }
             }}
             value={`${city}, ${state}`}
-            renderInput={params => (
+            renderInput={(params) => (
               <TextField
                 style={{ width: "100%" }}
                 {...params}
@@ -277,18 +285,18 @@ export default function Main(props) {
                       ) : null}
                       {params.InputProps.endAdornment}
                     </React.Fragment>
-                  )
+                  ),
                 }}
               />
             )}
           />
         </Grid>
-        <Grid item xs={12} md={1}>
-          <Button 
-            variant="contained" 
+        <Grid item xs={12} md={1} className={classes.searchRoot}>
+          <Button
+            variant="contained"
             color="secondary"
             onClick={handleSearch}
-            style={{height: 56}}
+            style={{ height: 56 }}
             fullWidth
             disabled={!(c && city && state)}
           >
@@ -299,10 +307,9 @@ export default function Main(props) {
 
       {/* <SearchBar city={"Scottsdale"} state={"AZ"} c={null} /> */}
 
-
       <div className={classes.categoriesRoot}>
         <Grid container spacing={matches ? 3 : 1}>
-          {Object.keys(categories).map(category => (
+          {Object.keys(categories).map((category) => (
             <Grid item xs={6} md={3} key={category}>
               <Link
                 underline="none"
