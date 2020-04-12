@@ -19,11 +19,9 @@ import PeopleIcon from "@material-ui/icons/People";
 
 import { getReviewsByBizId, postReviewByBizId } from '../../util/biz_api_util';
 
+import * as moment from "moment";
+
 import NavBarContainer from '../navbar/navbar_container';
-
-
-
-// const googleMapsApiKey = "AIzaSyBQiDIYfCisQCE9F0hOymDC_zFbXMUUtGc";
 
 // https://yelp-images.s3.amazonaws.com/assets/map-markers/annotation_32x43.png
 
@@ -314,382 +312,389 @@ export default function BizDetail(props) {
         </div>
 
         <div className={classes.detailRoot}>
-        <Typography
-          variant={matches ? "h3" : "h5"}
-          style={{
-            fontWeight: 700,
-            marginLeft: matches ? 0 : 8,
-            marginRight: matches ? 0 : 8,
-          }}
-        >
-          {props.biz.name}
-        </Typography>
-
-        <Box borderColor="transparent">
-          <div className={classes.ratingRoot}>
-            <Rating
-              name="read-only"
-              value={props.biz.stars}
-              precision={0.5}
-              readOnly
-            />
-            <Box ml={2}>
-              <Typography component="legend">
-                {props.biz.review_count} reviews
-              </Typography>
-            </Box>
-          </div>
-        </Box>
-
-        <Box borderColor="transparent">
-          <div className={classes.categoriesRoot}>
-            {props.biz.attributes &&
-            props.biz.attributes.RestaurantsPriceRange2 ? (
-              <Typography variant="subtitle1" gutterBottom>
-                {dollarSign(props.biz.attributes.RestaurantsPriceRange2)}
-                {bull}
-              </Typography>
-            ) : (
-              ""
-            )}
-
-            <Typography variant="subtitle2" gutterBottom>
-              {props.biz.categories
-                .map((category) => (
-                  <Link
-                    key={category}
-                    underline="none"
-                    component={RouterLink}
-                    to={
-                      "/search?c=" +
-                      encodeURIComponent(category) +
-                      "&loc=" +
-                      encodeURIComponent(`${props.biz.city},${props.biz.state}`)
-                    }
-                  >
-                    {category}
-                  </Link>
-                ))
-                .reduce((prev, curr) => [prev, ", ", curr])}
-            </Typography>
-          </div>
-        </Box>
-
-        <Divider />
-
-        <Typography
-          variant="h6"
-          style={{
-            fontWeight: 700,
-            marginLeft: matches ? 0 : 8,
-            marginRight: matches ? 0 : 8,
-          }}
-        >
-          Location & Hours
-        </Typography>
-
-        <div className={classes.locationRoot}>
-          <Grid
-            container
-            spacing={2}
-            justify="center"
-            className={classes.locationPos}
+          <Typography
+            variant={matches ? "h3" : "h5"}
+            style={{
+              fontWeight: 700,
+              marginLeft: matches ? 0 : 8,
+              marginRight: matches ? 0 : 8,
+            }}
           >
-            <Grid item xs={12} md={6}>
-              <Card className={classes.addressCard} variant="outlined">
-                {/* <CardActionArea> */}
-                <CardMedia
-                  className={classes.addressCardMedia}
-                  // image={process.env.PUBLIC_URL + "/staticmap.png"}
-                  image={googleMapsStaticURL(
-                    props.biz.latitude,
-                    props.biz.longitude,
-                    process.env.REACT_APP_GOOGLE_MAPS_API_KEY
-                  )}
-                  title="Contemplative Reptile"
-                />
-                <CardContent>
-                  <Typography variant="body2" component="p">
-                    {props.biz.address}
-                  </Typography>
-                  <Typography variant="body2" component="p">
-                    {props.biz.city}, {props.biz.state} {props.biz.postal_code}
-                  </Typography>
-                </CardContent>
-                {/* </CardActionArea> */}
-              </Card>
-            </Grid>
+            {props.biz.name}
+          </Typography>
 
-            {props.biz.hours ? (
+          <Box borderColor="transparent">
+            <div className={classes.ratingRoot}>
+              <Rating
+                name="read-only"
+                value={props.biz.stars}
+                precision={0.5}
+                readOnly
+              />
+              <Box ml={2}>
+                <Typography component="legend">
+                  {props.biz.review_count} reviews
+                </Typography>
+              </Box>
+            </div>
+          </Box>
+
+          <Box borderColor="transparent">
+            <div className={classes.categoriesRoot}>
+              {props.biz.attributes &&
+              props.biz.attributes.RestaurantsPriceRange2 ? (
+                <Typography variant="subtitle1" gutterBottom>
+                  {dollarSign(props.biz.attributes.RestaurantsPriceRange2)}
+                  {bull}
+                </Typography>
+              ) : (
+                ""
+              )}
+
+              <Typography variant="subtitle2" gutterBottom>
+                {props.biz.categories
+                  .map((category) => (
+                    <Link
+                      key={category}
+                      underline="none"
+                      component={RouterLink}
+                      to={
+                        "/search?c=" +
+                        encodeURIComponent(category) +
+                        "&loc=" +
+                        encodeURIComponent(
+                          `${props.biz.city},${props.biz.state}`
+                        )
+                      }
+                    >
+                      {category}
+                    </Link>
+                  ))
+                  .reduce((prev, curr) => [prev, ", ", curr])}
+              </Typography>
+            </div>
+          </Box>
+
+          <Divider />
+
+          <Typography
+            variant="h6"
+            style={{
+              fontWeight: 700,
+              marginLeft: matches ? 0 : 8,
+              marginRight: matches ? 0 : 8,
+            }}
+          >
+            Location & Hours
+          </Typography>
+
+          <div className={classes.locationRoot}>
+            <Grid
+              container
+              spacing={2}
+              justify="center"
+              className={classes.locationPos}
+            >
               <Grid item xs={12} md={6}>
-                <TableContainer>
-                  <Table
-                    size="small"
-                    aria-label="simple table"
-                    className={classes.hoursTable}
-                  >
-                    <TableBody>
-                      {Object.keys(props.biz.hours).map((key) => (
-                        <TableRow key={key}>
-                          <TableCell component="th" scope="row">
-                            <Box fontWeight="fontWeightBold">
-                              {key.slice(0, 3)}
-                            </Box>
-                          </TableCell>
-                          <TableCell align="right">
-                            {props.biz.hours[key]
-                              .split("-")
-                              .every((val, i, arr) => val === arr[0])
-                              ? "24 hours"
-                              : props.biz.hours[key]
-                                  .split("-")
-                                  .map((time) =>
-                                    new Date(
-                                      null,
-                                      null,
-                                      null,
-                                      ...time.split(":")
-                                    ).toLocaleTimeString(navigator.language, {
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                    })
-                                  )
-                                  .reduce((prev, curr) => [prev, " - ", curr])}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Grid>
-            ) : (
-              ""
-            )}
-          </Grid>
-        </div>
-
-        <Divider />
-
-        <Typography
-          variant="h6"
-          style={{
-            fontWeight: 700,
-            marginLeft: matches ? 0 : 8,
-            marginRight: matches ? 0 : 8,
-          }}
-        >
-          Reviews
-        </Typography>
-
-        {props.loggedIn ? (
-          <div key="write-review">
-            <Grid container justify="center" spacing={0}>
-              <Grid item xs={12} md={2}>
-                <Card elevation={0}>
-                  <CardContent
-                    style={{
-                      background: "#f5f5f5",
-                      paddingTop: matches ? 16 : 8,
-                      paddingBottom: matches ? 24 : 8,
-                    }}
-                  >
-                    <Box
-                      fontWeight="fontWeightBold"
-                      style={{ marginTop: 5, marginBottom: 5 }}
-                    >
-                      {props.currentUser.name}
-                    </Box>
-                    <Typography
-                      variant="caption"
-                      className={classes.ratingRoot}
-                    >
-                      <StarsIcon style={{ fontSize: 16 }} />
-                      <Box ml={1}>
-                        {`${props.currentUser.review_count}`} reviews
-                      </Box>
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      className={classes.ratingRoot}
-                    >
-                      <PeopleIcon style={{ fontSize: 16 }} />
-                      <Box ml={1}>
-                        {`${props.currentUser.friends.split(", ").length}`}{" "}
-                        friends
-                      </Box>
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={12} md={10}>
-                <Card elevation={0} style={{ background: "#f5f5f5" }}>
-                  <CardContent
-                    style={{
-                      paddingTop: matches ? 16 : 0,
-                      paddingBottom: matches ? 16 : 8,
-                    }}
-                  >
-                    <div className={classes.reviewRoot}>
-                      <Rating
-                        name="select-rating"
-                        value={rating}
-                        style={{ marginBottom: 3 }}
-                        onChange={(e, v) => {
-                          setRating(v);
-                        }}
-                        onChangeActive={(e, v) => {
-                          setHover(v);
-                        }}
-                      />
-                      {rating !== null && (
-                        <Box ml={2}>
-                          {labels[hover !== -1 ? hover : rating]}
-                        </Box>
-                      )}
-                    </div>
-
-                    <form
-                      onSubmit={handleSubmit}
-                      className={classes.reviewBodyRoot}
-                    >
-                      <TextField
-                        style={{ marginBottom: 10 }}
-                        id="outlined-multiline-static"
-                        // label="Multiline"
-                        multiline
-                        rows="6"
-                        value={reviewBody}
-                        onChange={handleChangeReviewBody}
-                        placeholder={reviewPlaceholder}
-                        variant="outlined"
-                      />
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        type="submit"
-                      >
-                        Post Review
-                      </Button>
-                    </form>
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
-
-            <Divider />
-          </div>
-        ) : (
-          ""
-        )}
-
-        {reviews.map((review) => (
-          <div key={review._id}>
-            <Grid container justify="center" spacing={0}>
-              <Grid item xs={12} md={2}>
-                <Card elevation={0}>
-                  <CardContent
-                    style={{
-                      background: "#f5f5f5",
-                      paddingTop: matches ? 16 : 8,
-                      paddingBottom: matches ? 24 : 8,
-                    }}
-                  >
-                    <Box
-                      fontWeight="fontWeightBold"
-                      style={{ marginTop: 5, marginBottom: 5 }}
-                    >
-                      {review.user_id.name}
-                    </Box>
-                    <Typography
-                      variant="caption"
-                      className={classes.ratingRoot}
-                    >
-                      <StarsIcon style={{ fontSize: 16 }} />
-                      <Box ml={1}>
-                        {`${review.user_id.review_count}`} reviews
-                      </Box>
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      className={classes.ratingRoot}
-                    >
-                      <PeopleIcon style={{ fontSize: 16 }} />
-                      <Box ml={1}>
-                        {`${review.user_id.friends.split(", ").length}`} friends
-                      </Box>
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={12} md={10}>
-                <Card elevation={0} style={{ background: "#f5f5f5" }}>
-                  <CardContent
-                    style={{
-                      paddingTop: matches ? 16 : 0,
-                      paddingBottom: matches ? 16 : 8,
-                    }}
-                  >
-                    <div className={classes.reviewRoot}>
-                      <Rating
-                        name="read-only"
-                        value={review.stars}
-                        precision={0.5}
-                        readOnly
-                        style={{ marginBottom: 3 }}
-                      />
-                      <Box ml={2}>
-                        <Typography variant="body2">
-                          {new Date(review.date).toLocaleDateString()}
-                        </Typography>
-                      </Box>
-                    </div>
-
+                <Card className={classes.addressCard} variant="outlined">
+                  {/* <CardActionArea> */}
+                  <CardMedia
+                    className={classes.addressCardMedia}
+                    // image={process.env.PUBLIC_URL + "/staticmap.png"}
+                    image={googleMapsStaticURL(
+                      props.biz.latitude,
+                      props.biz.longitude,
+                      process.env.REACT_APP_GOOGLE_MAPS_API_KEY
+                    )}
+                    title="Contemplative Reptile"
+                  />
+                  <CardContent>
                     <Typography variant="body2" component="p">
-                      {review.text}
+                      {props.biz.address}
+                    </Typography>
+                    <Typography variant="body2" component="p">
+                      {props.biz.city}, {props.biz.state}{" "}
+                      {props.biz.postal_code}
                     </Typography>
                   </CardContent>
-                  <CardActions className={classes.pos}>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      startIcon={<EmojiObjectsIcon />}
-                    >
-                      Useful{review.useful > 0 ? ` ${review.useful}` : ""}
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      startIcon={<EmojiEmotionsIcon />}
-                    >
-                      Funny{review.funny > 0 ? ` ${review.funny}` : ""}
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      startIcon={<MoodIcon />}
-                    >
-                      Cool{review.cool > 0 ? ` ${review.cool}` : ""}
-                    </Button>
-                  </CardActions>
+                  {/* </CardActionArea> */}
                 </Card>
               </Grid>
+
+              {props.biz.hours ? (
+                <Grid item xs={12} md={6}>
+                  <TableContainer>
+                    <Table
+                      size="small"
+                      aria-label="simple table"
+                      className={classes.hoursTable}
+                    >
+                      <TableBody>
+                        {Object.keys(props.biz.hours).map((key) => (
+                          <TableRow key={key}>
+                            <TableCell component="th" scope="row">
+                              <Box fontWeight="fontWeightBold">
+                                {key.slice(0, 3)}
+                              </Box>
+                            </TableCell>
+                            <TableCell align="right">
+                              {props.biz.hours[key]
+                                .split("-")
+                                .every((val, i, arr) => val === arr[0])
+                                ? "24 hours"
+                                : props.biz.hours[key]
+                                    .split("-")
+                                    .map((time) =>
+                                      new Date(
+                                        null,
+                                        null,
+                                        null,
+                                        ...time.split(":")
+                                      ).toLocaleTimeString(navigator.language, {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      })
+                                    )
+                                    .reduce((prev, curr) => [
+                                      prev,
+                                      " - ",
+                                      curr,
+                                    ])}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Grid>
+              ) : (
+                ""
+              )}
             </Grid>
-
-            <Divider />
           </div>
-        ))}
 
-        <div className={classes.paginationRoot}>
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={handlePageChange}
-          />
+          <Divider />
+
+          <Typography
+            variant="h6"
+            style={{
+              fontWeight: 700,
+              marginLeft: matches ? 0 : 8,
+              marginRight: matches ? 0 : 8,
+            }}
+          >
+            Reviews
+          </Typography>
+
+          {props.loggedIn ? (
+            <div key="write-review">
+              <Grid container justify="center" spacing={0}>
+                <Grid item xs={12} md={2}>
+                  <Card elevation={0}>
+                    <CardContent
+                      style={{
+                        background: "#f5f5f5",
+                        paddingTop: matches ? 16 : 8,
+                        paddingBottom: matches ? 24 : 8,
+                      }}
+                    >
+                      <Box
+                        fontWeight="fontWeightBold"
+                        style={{ marginTop: 5, marginBottom: 5 }}
+                      >
+                        {props.currentUser.name}
+                      </Box>
+                      <Typography
+                        variant="caption"
+                        className={classes.ratingRoot}
+                      >
+                        <StarsIcon style={{ fontSize: 16 }} />
+                        <Box ml={1}>
+                          {`${props.currentUser.review_count}`} reviews
+                        </Box>
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        className={classes.ratingRoot}
+                      >
+                        <PeopleIcon style={{ fontSize: 16 }} />
+                        <Box ml={1}>
+                          {`${props.currentUser.friends.split(", ").length}`}{" "}
+                          friends
+                        </Box>
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+
+                <Grid item xs={12} md={10}>
+                  <Card elevation={0} style={{ background: "#f5f5f5" }}>
+                    <CardContent
+                      style={{
+                        paddingTop: matches ? 16 : 0,
+                        paddingBottom: matches ? 16 : 8,
+                      }}
+                    >
+                      <div className={classes.reviewRoot}>
+                        <Rating
+                          name="select-rating"
+                          value={rating}
+                          style={{ marginBottom: 3 }}
+                          onChange={(e, v) => {
+                            setRating(v);
+                          }}
+                          onChangeActive={(e, v) => {
+                            setHover(v);
+                          }}
+                        />
+                        {rating !== null && (
+                          <Box ml={2}>
+                            {labels[hover !== -1 ? hover : rating]}
+                          </Box>
+                        )}
+                      </div>
+
+                      <form
+                        onSubmit={handleSubmit}
+                        className={classes.reviewBodyRoot}
+                      >
+                        <TextField
+                          style={{ marginBottom: 10 }}
+                          id="outlined-multiline-static"
+                          // label="Multiline"
+                          multiline
+                          rows="6"
+                          value={reviewBody}
+                          onChange={handleChangeReviewBody}
+                          placeholder={reviewPlaceholder}
+                          variant="outlined"
+                        />
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          type="submit"
+                        >
+                          Post Review
+                        </Button>
+                      </form>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+
+              <Divider />
+            </div>
+          ) : (
+            ""
+          )}
+
+          {reviews.map((review) => (
+            <div key={review._id}>
+              <Grid container justify="center" spacing={0}>
+                <Grid item xs={12} md={2}>
+                  <Card elevation={0}>
+                    <CardContent
+                      style={{
+                        background: "#f5f5f5",
+                        paddingTop: matches ? 16 : 8,
+                        paddingBottom: matches ? 24 : 8,
+                      }}
+                    >
+                      <Box
+                        fontWeight="fontWeightBold"
+                        style={{ marginTop: 5, marginBottom: 5 }}
+                      >
+                        {review.user_id.name}
+                      </Box>
+                      <Typography
+                        variant="caption"
+                        className={classes.ratingRoot}
+                      >
+                        <StarsIcon style={{ fontSize: 16 }} />
+                        <Box ml={1}>
+                          {`${review.user_id.review_count}`} reviews
+                        </Box>
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        className={classes.ratingRoot}
+                      >
+                        <PeopleIcon style={{ fontSize: 16 }} />
+                        <Box ml={1}>
+                          {`${review.user_id.friends.split(", ").length}`}{" "}
+                          friends
+                        </Box>
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+
+                <Grid item xs={12} md={10}>
+                  <Card elevation={0} style={{ background: "#f5f5f5" }}>
+                    <CardContent
+                      style={{
+                        paddingTop: matches ? 16 : 0,
+                        paddingBottom: matches ? 16 : 8,
+                      }}
+                    >
+                      <div className={classes.reviewRoot}>
+                        <Rating
+                          name="read-only"
+                          value={review.stars}
+                          precision={0.5}
+                          readOnly
+                          style={{ marginBottom: 3 }}
+                        />
+                        <Box ml={2}>
+                          <Typography variant="body2">
+                            {new moment(review.date).toDate().toLocaleDateString()}
+                          </Typography>
+                        </Box>
+                      </div>
+
+                      <Typography variant="body2" component="p">
+                        {review.text}
+                      </Typography>
+                    </CardContent>
+                    <CardActions className={classes.pos}>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        startIcon={<EmojiObjectsIcon />}
+                      >
+                        Useful{review.useful > 0 ? ` ${review.useful}` : ""}
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        startIcon={<EmojiEmotionsIcon />}
+                      >
+                        Funny{review.funny > 0 ? ` ${review.funny}` : ""}
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        startIcon={<MoodIcon />}
+                      >
+                        Cool{review.cool > 0 ? ` ${review.cool}` : ""}
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              </Grid>
+
+              <Divider />
+            </div>
+          ))}
+
+          <div className={classes.paginationRoot}>
+            <Pagination
+              count={totalPages}
+              page={page}
+              onChange={handlePageChange}
+            />
+          </div>
         </div>
-
-      </div>
       </div>
     </React.Fragment>
   );
