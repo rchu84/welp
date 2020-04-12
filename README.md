@@ -10,6 +10,10 @@ The web app is a single-page application built on MERN stack (MongoDB, Express.j
 
 # Features
 
+![Home](../master/frontend/public/screenshots/Home.jpeg)
+![Business List](../master/frontend/public/screenshots/List.png)
+![Business Detail](../master/frontend/public/screenshots/Detail.png)
+
 ---
 
 #### User Sign Up / Login
