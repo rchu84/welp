@@ -1,7 +1,5 @@
 # Welp
 
-[Welp-Heroku](https://welp-mern.herokuapp.com "Welp")
-
 Welp, inspired by Yelp, is a website that publishes crowd-sourced reviews about businesses. Almost all data on Welp is provided by [Yelp Open Dataset](https://www.yelp.com/dataset "Yelp Open Dataset").
 
 The web app is a single-page application built on MERN stack (MongoDB, Express.js, React/Redux, Node.js) and powered by [Material UI](https://material-ui.com/ "Material UI"), it's also responsive and fully functional with the following features.
